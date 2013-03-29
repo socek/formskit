@@ -1,0 +1,17 @@
+venv
+*.pyc
+*.pyo
+data
+*.egg-info
+.installed.cfg
+bin
+develop-eggs
+eggs
+parts
+syncdb
+exdata
+*.sublime-*
+old
+bootstrap.py
+*.log
+.ropeproject
