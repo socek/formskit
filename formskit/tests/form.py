@@ -14,7 +14,7 @@ class Form1(Form):
         self._test_data = data
         self.submitTest = True
 
-    def overalValidation(self):
+    def overalValidation(self, data):
         return self.overal
 
     def createForm(self):

@@ -53,8 +53,9 @@ class Form(object):
 
     def _validate_and_submit(self):
         if self._validateFields():
-            if self.overalValidation():
-                self.submit(self.gatherDataFromFields())
+            data = self.gatherDataFromFields()
+            if self.overalValidation(data):
+                self.submit(data)
                 return True
             else:
                 self.error = True
@@ -68,7 +69,7 @@ class Form(object):
     def __getitem__(self, name):
         return self.fields[name]
 
-    def overalValidation(self):
+    def overalValidation(self, data):
         return True
 
     def createForm(self):
