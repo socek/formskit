@@ -8,6 +8,8 @@ class Form(object):
     def __init__(self):
         self.fields = {}
         self.createForm()
+        self.error = False
+        self.message = None
 
     @property
     def name(self):
@@ -20,7 +22,8 @@ class Form(object):
     def gatherDataFromFields(self):
         data = {}
         for name, field in self.fields.items():
-            data[name] = field.value
+            if not field.ignore:
+                data[name] = field.value
         return data
 
     def _isThisFormSubmited(self, data):
@@ -31,7 +34,7 @@ class Form(object):
         data.pop(self.form_name_value)
 
         for name in self.fields:
-            if not name in data:
+            if not name in data and not self.fields[name].ignore:
                 raise ValueNotPresent(name)
 
         for name, value in data.items():
@@ -43,8 +46,9 @@ class Form(object):
     def _validateFields(self):
         validation = True
         for name, field in self.fields.items():
-            if not field.validate():
-                validation = False
+            if not field.ignore:
+                if not field.validate():
+                    validation = False
         return validation
 
     def _validate_and_submit(self):
@@ -52,12 +56,17 @@ class Form(object):
             if self.overalValidation():
                 self.submit(self.gatherDataFromFields())
                 return True
+            else:
+                self.error = True
         return False
 
     def __call__(self, data):
         if self._isThisFormSubmited(data):
             self._gatherFormsData(data)
             return self._validate_and_submit()
+
+    def __getitem__(self, name):
+        return self.fields[name]
 
     def overalValidation(self):
         return True

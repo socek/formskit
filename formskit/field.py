@@ -3,10 +3,11 @@ from formskit.validators import ValidationError
 
 class Field(object):
 
-    def __init__(self, name, validators=[], label=None):
+    def __init__(self, name, validators=[], label=None, ignore=False):
         self.name = name
         self.label = label
         self.validators = validators
+        self.ignore = ignore
         self.value = None
         self.form = None
         self.message = None
@@ -26,3 +27,7 @@ class Field(object):
             self.message = ex.message
             self.error = True
             return False
+
+class Button(Field):
+    def __init__(self, name, label):
+        super(Button, self).__init__(name, label=label, ignore=True)

@@ -1,4 +1,4 @@
-from formskit import Form, Field
+from formskit import Form, Field, Button
 from formskit.errors import BadValue, ValueNotPresent
 from formskit.tests.base import FormskitTestCase
 from formskit.validators import NotEmpty
@@ -155,7 +155,7 @@ class FormTest(FormskitTestCase):
         form.overal = True
         self.assertTrue(form._validate_and_submit())
         self.assertTrue(form.submitTest)
-        self.assertEqual({form.name1:None}, form._test_data)
+        self.assertEqual({form.name1: None}, form._test_data)
 
     def test_call(self):
         form = Form1()
@@ -163,8 +163,8 @@ class FormTest(FormskitTestCase):
         value1 = 'value1'
 
         data = {
-            form.form_name_value : 'bad name',
-            form.name1 : value1,
+            form.form_name_value: 'bad name',
+            form.name1: value1,
         }
 
         self.assertNone(form(data))
@@ -176,6 +176,25 @@ class FormTest(FormskitTestCase):
         form.overal = True
         self.assertTrue(form(data))
         self.assertTrue(form.submitTest)
-        self.assertEqual({form.name1:value1}, form._test_data)
+        self.assertEqual({form.name1: value1}, form._test_data)
+
+    def test_ignore(self):
+        good_name = 'name1'
+        good_value = 'value1'
+        button_name = 'button1'
+        form = Form1()
+        form.overal = True
+        form.addField(Button(button_name, 'label'))
+        form.addField(Field(good_name))
+
+        data = {
+            form.form_name_value: form.name,
+            good_name : good_value,
+        }
+
+        self.assertTrue(form(data))
+        self.assertEqual(good_value, form[good_name].value)
+        self.assertEqual(good_value, form._test_data[good_name])
+        self.assertFalse(button_name in form._test_data)
 
 

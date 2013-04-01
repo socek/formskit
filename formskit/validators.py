@@ -26,7 +26,7 @@ class NotEmpty(Validator):
     def validate(self, value):
         if value == None:
             return False
-        elif type(value) == str and value.strip() == '':
+        elif (type(value) == str or type(value) == unicode) and value.strip() == '':
             return False
         elif type(value) in [list, dict, tuple] and len(value) == 0:
             return False
