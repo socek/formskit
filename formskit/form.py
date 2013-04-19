@@ -1,5 +1,5 @@
 from formskit.errors import BadValue, ValueNotPresent
-
+from formskit.formvalidators import FormValidationError
 
 class Form(object):
 
@@ -7,6 +7,7 @@ class Form(object):
 
     def __init__(self):
         self.fields = {}
+        self.formValidators = []
         self.createForm()
         self.error = False
         self.message = None
@@ -18,6 +19,10 @@ class Form(object):
     def addField(self, field):
         self.fields[field.name] = field
         field.initForm(self)
+
+    def addFormValidator(self, validator):
+        validator.setForm(self)
+        self.formValidators.append(validator)
 
     def gatherDataFromFields(self):
         data = {}
@@ -44,11 +49,25 @@ class Form(object):
                 raise BadValue(name)
 
     def _validateFields(self):
-        validation = True
-        for name, field in self.fields.items():
-            if not field.ignore:
-                if not field.validate():
-                    validation = False
+        def validateFields():
+            validation = True
+            for name, field in self.fields.items():
+                if not field.ignore:
+                    validation &= field.validate()
+            return validation
+        def validateGlobalValidators():
+            try:
+                for formValidator in self.formValidators:
+                    formValidator()
+            except FormValidationError, er:
+                self.message = er.message
+                self.error = True
+                return False
+            return True
+        #-----------------------------------------------------------------------
+        validation = validateFields()
+        if validation:
+            validation = validateGlobalValidators()
         return validation
 
     def _validate_and_submit(self):

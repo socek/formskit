@@ -7,6 +7,7 @@ def import_tests():
     from . import validators
     from . import field
     from . import form
+    from . import formvalidators
 
 
 def get_all_test_suite():
