@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
 from setuptools import setup, find_packages
 
+install_requires = [
+    'python-dateutil'
+]
+
 if __name__ == '__main__':
     setup(name='formskit',
           version='0.1',
