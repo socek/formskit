@@ -4,6 +4,18 @@ from formskit.tests.base import FormskitTestCase
 from formskit.validators import NotEmpty
 
 
+class SampleObject(object):
+
+    def __init__(self, name1='value1', name2='value2'):
+        self.name1 = name1
+        self.name2 = name2
+
+class SampleObject2(object):
+
+    def __init__(self, name1='value1'):
+        self.name1 = name1
+
+
 class Form1(Form):
 
     submitTest = False
@@ -189,7 +201,7 @@ class FormTest(FormskitTestCase):
 
         data = {
             form.form_name_value: form.name,
-            good_name : good_value,
+            good_name: good_value,
         }
 
         self.assertTrue(form(data))
@@ -197,4 +209,52 @@ class FormTest(FormskitTestCase):
         self.assertEqual(good_value, form._test_data[good_name])
         self.assertFalse(button_name in form._test_data)
 
+    def test_update(self):
+        s1 = SampleObject()
+        form = Form3()
+        form.update(s1)
 
+        self.assertEqual(s1.name1, form['name1'].value)
+        self.assertEqual(s1.name2, form['name2'].value)
+
+        s2 = SampleObject('value1_2', 'value2_2')
+        form.update(s2)
+
+        self.assertEqual(s2.name1, form['name1'].value)
+        self.assertEqual(s2.name2, form['name2'].value)
+
+        s3 = SampleObject('value1_3', 'value2_3')
+        form.update(s3, ['name1'])
+
+        self.assertEqual(s3.name1, form['name1'].value)
+        self.assertEqual(s2.name2, form['name2'].value)
+
+        s4 = {
+            'name1' : 'value1_4',
+            'name2' : 'value2_4',
+        }
+
+        form.update(s4, method='dict')
+
+        self.assertEqual(s4['name1'], form['name1'].value)
+        self.assertEqual(s4['name2'], form['name2'].value)
+
+        s5 = SampleObject2('value1_5')
+        self.assertRaises(AttributeError, form.update, s5)
+
+        s6 = SampleObject2('value1_6')
+        form.update(s6, method='obj_default_none')
+        self.assertEqual(s6.name1, form['name1'].value)
+        self.assertEqual(None, form['name2'].value)
+
+        s7 = SampleObject2('value1_7')
+        def method(obj, name):
+            return name
+        form.update(s7, method=method)
+        self.assertEqual('name1', form['name1'].value)
+        self.assertEqual('name2', form['name2'].value)
+
+        s8 = SampleObject2('value1_8')
+        form.update(s8, ignore_missing=True)
+        self.assertEqual(s8.name1, form['name1'].value)
+        self.assertEqual('name2', form['name2'].value)

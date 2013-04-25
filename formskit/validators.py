@@ -9,7 +9,7 @@ class ValidationError(Exception):
         self.message = validator.message
 
 
-class Validator:
+class Validator(object):
 
     def __init__(self, message=None):
         if message:

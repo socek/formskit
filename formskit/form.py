@@ -1,6 +1,7 @@
 from formskit.errors import BadValue, ValueNotPresent
 from formskit.formvalidators import FormValidationError
 
+
 class Form(object):
 
     form_name_value = 'form_name'
@@ -55,6 +56,7 @@ class Form(object):
                 if not field.ignore:
                     validation &= field.validate()
             return validation
+
         def validateGlobalValidators():
             try:
                 for formValidator in self.formValidators:
@@ -87,6 +89,45 @@ class Form(object):
 
     def __getitem__(self, name):
         return self.fields[name]
+
+    def update(self, obj, names=None, method='obj', ignore_missing=False):
+        def getattr_obj(obj, name):
+            return getattr(obj, name)
+
+        def getattr_dict(obj, name):
+            return obj[name]
+
+        def getattr_obj_default_none(obj, name):
+            return getattr(obj, name, None)
+
+        def get_method(method):
+            getattr_funs = {
+                'obj': getattr_obj,
+                'dict': getattr_dict,
+                'obj_default_none': getattr_obj_default_none,
+            }
+            if type(method) in [str, unicode]:
+                return getattr_funs[method]
+            else:
+                return method
+
+        def make_names(names):
+            if names is None:
+                return self.fields.keys()
+            else:
+                return names
+
+        get = get_method(method)
+        names = make_names(names)
+        if ignore_missing:
+            for name in names:
+                try:
+                    self[name].value = get(obj, name)
+                except (AttributeError, KeyError):
+                    continue
+        else:
+            for name in names:
+                self[name].value = get(obj, name)
 
     def overalValidation(self, data):
         return True
