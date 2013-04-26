@@ -40,6 +40,7 @@ class Form2(Form):
     def createForm(self):
         self.addField(Field(self.name1, [NotEmpty]))
         self.addField(Field(self.name2, [NotEmpty]))
+        self.addField(Button('button', label=u'Zaloguj'))
 
 
 class Form3(Form):
@@ -49,6 +50,7 @@ class Form3(Form):
     def createForm(self):
         self.addField(Field(self.name1))
         self.addField(Field(self.name2, [NotEmpty()]))
+        self.addField(Button('button', label=u'Zaloguj'))
 
 
 class FormTest(FormskitTestCase):

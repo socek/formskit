@@ -117,17 +117,21 @@ class Form(object):
             else:
                 return names
 
+        def set_form_field(name, obj, get):
+            if not self[name].ignore:
+                self[name].value = get(obj, name)
+
         get = get_method(method)
         names = make_names(names)
         if ignore_missing:
             for name in names:
                 try:
-                    self[name].value = get(obj, name)
+                    set_form_field(name, obj, get)
                 except (AttributeError, KeyError):
                     continue
         else:
             for name in names:
-                self[name].value = get(obj, name)
+                set_form_field(name, obj, get)
 
     def overalValidation(self, data):
         return True
