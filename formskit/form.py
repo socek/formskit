@@ -118,7 +118,7 @@ class Form(object):
                 return names
 
         def set_form_field(name, obj, get):
-            if not self[name].ignore:
+            if not self[name].ignore and self[name].value in [None, '']:
                 self[name].value = get(obj, name)
 
         get = get_method(method)

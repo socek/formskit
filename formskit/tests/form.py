@@ -10,6 +10,7 @@ class SampleObject(object):
         self.name1 = name1
         self.name2 = name2
 
+
 class SampleObject2(object):
 
     def __init__(self, name1='value1'):
@@ -211,52 +212,68 @@ class FormTest(FormskitTestCase):
         self.assertEqual(good_value, form._test_data[good_name])
         self.assertFalse(button_name in form._test_data)
 
-    def test_update(self):
+
+class FormUpdateTest(FormskitTestCase):
+
+    def setUp(self):
+        super(FormUpdateTest, self).setUp()
+        self.form = Form3()
+
+    def test_simple(self):
         s1 = SampleObject()
-        form = Form3()
-        form.update(s1)
+        self.form.update(s1)
 
-        self.assertEqual(s1.name1, form['name1'].value)
-        self.assertEqual(s1.name2, form['name2'].value)
+        self.assertEqual(s1.name1, self.form['name1'].value)
+        self.assertEqual(s1.name2, self.form['name2'].value)
 
-        s2 = SampleObject('value1_2', 'value2_2')
-        form.update(s2)
-
-        self.assertEqual(s2.name1, form['name1'].value)
-        self.assertEqual(s2.name2, form['name2'].value)
-
+    def test_with_names(self):
         s3 = SampleObject('value1_3', 'value2_3')
-        form.update(s3, ['name1'])
+        self.form.update(s3, ['name1'])
 
-        self.assertEqual(s3.name1, form['name1'].value)
-        self.assertEqual(s2.name2, form['name2'].value)
+        self.assertEqual(s3.name1, self.form['name1'].value)
+        self.assertEqual(None, self.form['name2'].value)
 
+    def test_dict(self):
         s4 = {
-            'name1' : 'value1_4',
-            'name2' : 'value2_4',
+            'name1': 'value1_4',
+            'name2': 'value2_4',
         }
 
-        form.update(s4, method='dict')
+        self.form.update(s4, method='dict')
 
-        self.assertEqual(s4['name1'], form['name1'].value)
-        self.assertEqual(s4['name2'], form['name2'].value)
+        self.assertEqual(s4['name1'], self.form['name1'].value)
+        self.assertEqual(s4['name2'], self.form['name2'].value)
 
+    def test_missing_attribute(self):
         s5 = SampleObject2('value1_5')
-        self.assertRaises(AttributeError, form.update, s5)
+        self.assertRaises(AttributeError, self.form.update, s5)
 
+    def test_obj_default_none(self):
         s6 = SampleObject2('value1_6')
-        form.update(s6, method='obj_default_none')
-        self.assertEqual(s6.name1, form['name1'].value)
-        self.assertEqual(None, form['name2'].value)
+        self.form.update(s6, method='obj_default_none')
+        self.assertEqual(s6.name1, self.form['name1'].value)
+        self.assertEqual(None, self.form['name2'].value)
 
+    def test_own_get_method(self):
         s7 = SampleObject2('value1_7')
+
         def method(obj, name):
             return name
-        form.update(s7, method=method)
-        self.assertEqual('name1', form['name1'].value)
-        self.assertEqual('name2', form['name2'].value)
+        self.form.update(s7, method=method)
+        self.assertEqual('name1', self.form['name1'].value)
+        self.assertEqual('name2', self.form['name2'].value)
 
+    def test_ignore_missing(self):
         s8 = SampleObject2('value1_8')
-        form.update(s8, ignore_missing=True)
-        self.assertEqual(s8.name1, form['name1'].value)
-        self.assertEqual('name2', form['name2'].value)
+        self.form.update(s8, ignore_missing=True)
+        self.assertEqual(s8.name1, self.form['name1'].value)
+        self.assertEqual(None, self.form['name2'].value)
+
+    def test_update_after_change(self):
+        changed_value = 'value3_9'
+        s9 = SampleObject('value1_9', 'value2_9')
+        self.form['name1'].value = changed_value
+        self.form.update(s9)
+
+        self.assertEqual(changed_value, self.form['name1'].value)
+        self.assertEqual(s9.name2, self.form['name2'].value)
