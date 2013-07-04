@@ -16,3 +16,5 @@ bootstrap.py
 *.log
 .ropeproject
 TODO
+.coverage
+htmlcov

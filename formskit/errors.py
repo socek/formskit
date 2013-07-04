@@ -4,7 +4,7 @@ class BadValue(Exception):
         self.name = name
 
     def __str__(self):
-        return self.name
+        return self.name  # pragma: no cover
 
 
 class ValueNotPresent(Exception):
@@ -13,4 +13,4 @@ class ValueNotPresent(Exception):
         self.name = name
 
     def __str__(self):
-        return self.name
+        return self.name  # pragma: no cover

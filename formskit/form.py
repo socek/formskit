@@ -1,3 +1,5 @@
+from copy import copy
+
 from formskit.errors import BadValue, ValueNotPresent
 from formskit.formvalidators import FormValidationError
 
@@ -8,6 +10,8 @@ class Form(object):
 
     def __init__(self):
         self.fields = {}
+        self.fieldLists = {}
+        self.fieldLists_copyfields = {}
         self.formValidators = []
         self.createForm()
         self.error = False
@@ -21,6 +25,10 @@ class Form(object):
         self.fields[field.name] = field
         field.initForm(self)
 
+    def addFieldList(self, field):
+        self.fieldLists_copyfields[field.name] = field
+        field.initForm(self)
+
     def addFormValidator(self, validator):
         validator.setForm(self)
         self.formValidators.append(validator)
@@ -30,6 +38,10 @@ class Form(object):
         for name, field in self.fields.items():
             if not field.ignore:
                 data[name] = field.value
+        for name in self.fieldLists_copyfields:
+            data[name] = []
+            for field in self.fieldLists[name]:
+                data[name].append(field.value)
         return data
 
     def _isThisFormSubmited(self, data):
@@ -44,9 +56,15 @@ class Form(object):
                 raise ValueNotPresent(name)
 
         for name, value in data.items():
-            try:
+            if name in list(self.fields):
                 self.fields[name].value = value
-            except KeyError:
+            elif name in list(self.fieldLists_copyfields):
+                self.fieldLists[name] = []
+                for small_value in value:
+                    field = copy(self.fieldLists_copyfields[name])
+                    self.fieldLists[name].append(field)
+                    field.value = small_value
+            else:
                 raise BadValue(name)
 
     def _validateFields(self):
@@ -55,6 +73,10 @@ class Form(object):
             for name, field in self.fields.items():
                 if not field.ignore:
                     validation &= field.validate()
+            for name, fields in self.fieldLists.items():
+                for field in fields:
+                    if not field.ignore:
+                        validation &= field.validate()
             return validation
 
         def validateGlobalValidators():
@@ -66,15 +88,15 @@ class Form(object):
                 self.error = True
                 return False
             return True
-        #-----------------------------------------------------------------------
+        #----------------------------------------------------------------------
         validation = validateFields()
         if validation:
             validation = validateGlobalValidators()
         return validation
 
     def _validate_and_submit(self):
+        data = self.gatherDataFromFields()
         if self._validateFields():
-            data = self.gatherDataFromFields()
             if self.overalValidation(data):
                 self.submit(data)
                 return True
@@ -88,7 +110,10 @@ class Form(object):
             return self._validate_and_submit()
 
     def __getitem__(self, name):
-        return self.fields[name]
+        try:
+            return self.fields[name]
+        except KeyError:
+            return self.fieldLists[name]
 
     def update(self, obj, names=None, method='obj', ignore_missing=False):
         def getattr_obj(obj, name):
@@ -134,10 +159,10 @@ class Form(object):
                 set_form_field(name, obj, get)
 
     def overalValidation(self, data):
-        return True
+        return True  # pragma: no cover
 
     def createForm(self):
-        pass
+        pass  # pragma: no cover
 
     def submit(self, data):
-        pass
+        pass  # pragma: no cover

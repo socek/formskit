@@ -1,3 +1,5 @@
+from copy import copy
+
 from formskit import Form, Field, Button
 from formskit.errors import BadValue, ValueNotPresent
 from formskit.tests.base import FormskitTestCase
@@ -69,6 +71,16 @@ class FormTest(FormskitTestCase):
         self.assertEqual(field, form.fields[name])
         self.assertEqual(form, field.form)
 
+    def test_addFieldList(self):
+        name = 'rosomak'
+        field = Field(name)
+        form = Form1()
+        form.addFieldList(field)
+
+        self.assertTrue(form.fieldLists_copyfields.has_key(name))
+        self.assertEqual(field, form.fieldLists_copyfields[name])
+        self.assertEqual(form, field.form)
+
     def test_gatherDataFromFields(self):
         name1 = 'rosomak'
         value1 = 'wolverine'
@@ -89,6 +101,24 @@ class FormTest(FormskitTestCase):
         self.assertTrue(data.has_key(name2))
         self.assertEqual(value1, data[name1])
         self.assertEqual(value2, data[name2])
+
+    def test_gatherDataFromFields_with_FieldList(self):
+        name1 = 'rosomak'
+        value1 = 'wolverine'
+        value2 = 'robin'
+
+        field1 = Field(name1)
+        field1.value = value1
+
+        field2 = Field(name1)
+        field2.value = value2
+        form = Form1()
+        form.addFieldList(field1)
+        form.fieldLists[name1] = [field1, field2]
+
+        data = form.gatherDataFromFields()
+        self.assertTrue(data.has_key(name1))
+        self.assertEqual([value1, value2], data[name1])
 
     def test_createForm(self):
         form = Form2()
@@ -134,6 +164,26 @@ class FormTest(FormskitTestCase):
         data['name3'] = 'value3'
         self.assertRaises(BadValue, form._gatherFormsData, data)
 
+    def test_gatherFormsData_with_fieldList(self):
+        form = Form1()
+
+        name1 = 'name2'
+        field1 = Field(name1)
+        form.addFieldList(field1)
+
+        value1 = 'value1'
+        value2 = 'value2'
+
+        data = {
+            'form_name': 'Form1',
+            'name1': 'something',
+            name1: [value1, value2],
+        }
+
+        form._gatherFormsData(data)
+        self.assertEqual(value1, form.fieldLists[name1][0].value)
+        self.assertEqual(value2, form.fieldLists[name1][1].value)
+
     def test_validateFields(self):
         form = Form3()
         form.fields[form.name1].value = ''
@@ -158,6 +208,22 @@ class FormTest(FormskitTestCase):
         self.assertFalse(form.fields['name2'].error)
         self.assertNone(form.fields['name1'].message)
         self.assertNone(form.fields['name2'].message)
+
+    def test__validateFields_with_fieldList(self):
+        form = Form3()
+        name5 = 'name5'
+        field = Field(name5, [NotEmpty()])
+        form.addFieldList(field)
+        form.fieldLists[name5] = [field, copy(field)]
+
+        form[name5][0].value = 'something'
+        form[name5][1].value = ''
+
+        self.assertFalse(form._validateFields())
+        self.assertFalse(form.fieldLists[name5][0].error)
+        self.assertTrue(form.fieldLists[name5][1].error)
+        self.assertNone(form.fieldLists[name5][0].message)
+        self.assertEqual(NotEmpty.message, form.fieldLists[name5][1].message)
 
     def test_validate_and_submit(self):
         form = Form1()
