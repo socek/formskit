@@ -40,8 +40,11 @@ class Form(object):
                 data[name] = field.value
         for name in self.fieldLists_copyfields:
             data[name] = []
-            for field in self.fieldLists[name]:
-                data[name].append(field.value)
+            try:
+                for field in self.fieldLists[name]:
+                    data[name].append(field.value)
+            except KeyError:
+                pass
         return data
 
     def _isThisFormSubmited(self, data):

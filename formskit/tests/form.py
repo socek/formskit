@@ -86,21 +86,26 @@ class FormTest(FormskitTestCase):
         value1 = 'wolverine'
         name2 = 'stefan'
         value2 = 'robin'
+        name3 = 'name3'
 
         field1 = Field(name1)
         field1.value = value1
 
         field2 = Field(name2)
         field2.value = value2
+
+        field3 = Field(name3)
         form = Form1()
         form.addField(field1)
         form.addField(field2)
+        form.addFieldList(field3)
 
         data = form.gatherDataFromFields()
         self.assertTrue(data.has_key(name1))
         self.assertTrue(data.has_key(name2))
         self.assertEqual(value1, data[name1])
         self.assertEqual(value2, data[name2])
+        self.assertEqual([], data[name3])
 
     def test_gatherDataFromFields_with_FieldList(self):
         name1 = 'rosomak'
