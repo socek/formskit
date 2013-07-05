@@ -278,6 +278,29 @@ class FormTest(FormskitTestCase):
         self.assertEqual(good_value, form._test_data[good_name])
         self.assertFalse(button_name in form._test_data)
 
+    def test_getitem_search1(self):
+        name = 'name1'
+        form = Form1()
+        form.addField(Field(name))
+        self.assertEqual(form.fields[name], form[name])
+
+    def test_getitem_search2(self):
+        name = 'name5'
+        form = Form()
+        form.addFieldList(Field(name))
+        form._gatherFormsData({name: ['value2','value3'], 'form_name': 'Form1'})
+        self.assertEqual(form.fieldLists[name], form[name])
+
+    def test_getitem_search3(self):
+        name = 'name5'
+        form = Form()
+        form.addFieldList(Field(name))
+        self.assertEqual(form.fieldLists_copyfields[name], form[name])
+
+    def test_getitem_search4(self):
+        name = 'name5'
+        form = Form()
+        self.assertRaises(KeyError, form.__getitem__, name)
 
 class FormUpdateTest(FormskitTestCase):
 

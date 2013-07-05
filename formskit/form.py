@@ -110,10 +110,12 @@ class Form(object):
             return self._validate_and_submit()
 
     def __getitem__(self, name):
-        try:
+        if name in self.fields:
             return self.fields[name]
-        except KeyError:
+        elif name in self.fieldLists:
             return self.fieldLists[name]
+        else:
+            return self.fieldLists_copyfields[name]
 
     def update(self, obj, names=None, method='obj', ignore_missing=False):
         def getattr_obj(obj, name):
