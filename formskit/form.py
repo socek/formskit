@@ -10,8 +10,7 @@ class Form(object):
 
     def __init__(self):
         self.fields = {}
-        self.fieldLists = {}
-        self.fieldLists_copyfields = {}
+        self.field_patterns = {}
         self.formValidators = []
         self.createForm()
         self.error = False
@@ -22,11 +21,7 @@ class Form(object):
         return self.__class__.__name__
 
     def addField(self, field):
-        self.fields[field.name] = field
-        field.initForm(self)
-
-    def addFieldList(self, field):
-        self.fieldLists_copyfields[field.name] = field
+        self.field_patterns[field.name] = field
         field.initForm(self)
 
     def addFormValidator(self, validator):
@@ -35,50 +30,50 @@ class Form(object):
 
     def gatherDataFromFields(self):
         data = {}
-        for name, field in self.fields.items():
-            if not field.ignore:
-                data[name] = field.value
-        for name in self.fieldLists_copyfields:
+        for name, fields in self.fields.items():
             data[name] = []
-            try:
-                for field in self.fieldLists[name]:
+            if not fields[0].ignore:
+                for field in fields:
                     data[name].append(field.value)
-            except KeyError:
-                pass
         return data
 
     def _isThisFormSubmited(self, data):
-        return self.form_name_value in data and data[self.form_name_value] == self.name
+        return self.form_name_value in data and data[self.form_name_value] == [self.name, ]
+
+    def _assign_field_value(self, name, value):
+        if not name in self.fields:
+            self.fields[name] = []
+        field = copy(self.field_patterns[name])
+        self.fields[name].append(field)
+        field.value = value
 
     def _gatherFormsData(self, data):
+        def search_for_missing_values(data):
+            for name, field in self.field_patterns.items():
+                if not name in data and not field.ignore:
+                    raise ValueNotPresent(name)
+        #----------------------------------------------------------------------
+        self.fields = {}
         data = dict(data)
         data.pop(self.form_name_value)
 
-        for name in self.fields:
-            if not name in data and not self.fields[name].ignore:
-                raise ValueNotPresent(name)
+        search_for_missing_values(data)
+
+        field_names = list(self.field_patterns)
 
         for name, value in data.items():
-            if name in list(self.fields):
-                self.fields[name].value = value[0]
-            elif name in list(self.fieldLists_copyfields):
-                self.fieldLists[name] = []
+            if name in field_names:
                 for small_value in value:
-                    field = copy(self.fieldLists_copyfields[name])
-                    self.fieldLists[name].append(field)
-                    field.value = small_value
+                    self._assign_field_value(name, small_value)
             else:
                 raise BadValue(name)
 
     def _validateFields(self):
         def validateFields():
             validation = True
-            for name, field in self.fields.items():
-                if not field.ignore:
-                    validation &= field.validate()
-            for name, fields in self.fieldLists.items():
-                for field in fields:
-                    if not field.ignore:
+            for name, fields in self.fields.items():
+                if not fields[0].ignore:
+                    for field in fields:
                         validation &= field.validate()
             return validation
 
@@ -112,14 +107,6 @@ class Form(object):
             self._gatherFormsData(data)
             return self._validate_and_submit()
 
-    def __getitem__(self, name):
-        if name in self.fields:
-            return self.fields[name]
-        elif name in self.fieldLists:
-            return self.fieldLists[name]
-        else:
-            return self.fieldLists_copyfields[name]
-
     def update(self, obj, names=None, method='obj', ignore_missing=False):
         def getattr_obj(obj, name):
             return getattr(obj, name)
@@ -143,13 +130,17 @@ class Form(object):
 
         def make_names(names):
             if names is None:
-                return self.fields.keys()
+                return list(self.field_patterns)
             else:
                 return names
 
         def set_form_field(name, obj, get):
-            if not self[name].ignore and self[name].value in [None, '']:
-                self[name].value = get(obj, name)
+            if not self.field_patterns[name].ignore and self.field_patterns[name].value in [None, '']:
+                data = get(obj, name)
+                if name in self.fields:
+                    self.fields[name][0].value = data
+                else:
+                    self._assign_field_value(name, data)
 
         get = get_method(method)
         names = make_names(names)

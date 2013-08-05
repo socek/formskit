@@ -31,7 +31,10 @@ class MustBeTheSame(FormValidator):
         return self.message_tpl % (self.label,)
 
     def validate(self):
-        values = [self.form[name].value for name in self.names]
+        values = []
+        for name in self.names:
+            for field in self.form.fields[name]:
+                values.append(field.value)
         first = values.pop(0)
         for value in values:
             if first != value:

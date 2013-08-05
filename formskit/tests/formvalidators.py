@@ -24,16 +24,16 @@ class FormValidatorTest(FormskitTestCase):
 
     def test_MustBeTheSame(self):
         form = Form1()
-        form.fields[form.name1].value = '1'
-        form.fields[form.name2].value = '2'
+        form._assign_field_value(form.name1, '1')
+        form._assign_field_value(form.name2, '2')
 
         self.assertFalse(form._validateFields())
         self.assertEqual(True, form.error)
         self.assertEqual('input must be the same!', form.message)
 
         form = Form1()
-        form.fields[form.name1].value = '1'
-        form.fields[form.name2].value = '1'
+        form._assign_field_value(form.name1, '1')
+        form._assign_field_value(form.name2, '1')
 
         self.assertTrue(form._validateFields())
         self.assertEqual(False, form.error)
