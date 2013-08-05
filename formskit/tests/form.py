@@ -149,8 +149,8 @@ class FormTest(FormskitTestCase):
         form.addField(field1)
         form.addField(field2)
 
-        value1 = 'value1'
-        value2 = 'value2'
+        value1 = ['value1',]
+        value2 = ['value2',]
 
         data = {
             'form_name': 'Form1',
@@ -163,8 +163,8 @@ class FormTest(FormskitTestCase):
 
         form._gatherFormsData(data)
 
-        self.assertEqual(value1, form.fields[name1].value)
-        self.assertEqual(value2, form.fields[name2].value)
+        self.assertEqual(value1[0], form.fields[name1].value)
+        self.assertEqual(value2[0], form.fields[name2].value)
 
         data['name3'] = 'value3'
         self.assertRaises(BadValue, form._gatherFormsData, data)
@@ -246,7 +246,7 @@ class FormTest(FormskitTestCase):
     def test_call(self):
         form = Form1()
 
-        value1 = 'value1'
+        value1 = ['value1',]
 
         data = {
             form.form_name_value: 'bad name',
@@ -262,11 +262,11 @@ class FormTest(FormskitTestCase):
         form.overal = True
         self.assertTrue(form(data))
         self.assertTrue(form.submitTest)
-        self.assertEqual({form.name1: value1}, form._test_data)
+        self.assertEqual({form.name1: value1[0]}, form._test_data)
 
     def test_ignore(self):
         good_name = 'name1'
-        good_value = 'value1'
+        good_value = ['value1',]
         button_name = 'button1'
         form = Form1()
         form.overal = True
@@ -279,8 +279,8 @@ class FormTest(FormskitTestCase):
         }
 
         self.assertTrue(form(data))
-        self.assertEqual(good_value, form[good_name].value)
-        self.assertEqual(good_value, form._test_data[good_name])
+        self.assertEqual(good_value[0], form[good_name].value)
+        self.assertEqual(good_value[0], form._test_data[good_name])
         self.assertFalse(button_name in form._test_data)
 
     def test_getitem_search1(self):

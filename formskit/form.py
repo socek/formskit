@@ -60,7 +60,7 @@ class Form(object):
 
         for name, value in data.items():
             if name in list(self.fields):
-                self.fields[name].value = value
+                self.fields[name].value = value[0]
             elif name in list(self.fieldLists_copyfields):
                 self.fieldLists[name] = []
                 for small_value in value:
