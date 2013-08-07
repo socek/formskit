@@ -1,5 +1,6 @@
 # encoding: utf8
 import re
+from decimal import Decimal, InvalidOperation
 
 
 class ValidationError(Exception):
@@ -34,12 +35,23 @@ class NotEmpty(Validator):
 
 
 class IsDigit(Validator):
-    message = u'This element must be and digit'
+    message = u'This element must be a digit.'
 
     def validate(self, value):
         if re.search('^-{0,1}[0-9]+$', value):
             return True
         else:
+            return False
+
+
+class IsDecimal(Validator):
+    message = u'This element must be a decimal.'
+
+    def validate(self, value):
+        try:
+            Decimal(value)
+            return True
+        except InvalidOperation:
             return False
 
 

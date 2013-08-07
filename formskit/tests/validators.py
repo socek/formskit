@@ -61,3 +61,20 @@ class EmailValidatorTest(ValidatorTest):
         'a', '', '-123213.12323', '2a',
         ' ', '@asdweq.asdad.pl', '1asd@asdasd.sadad.asdpl',
     ]
+
+class IsDecimalTest(ValidatorTest):
+    cls = VAL.IsDecimal
+
+    good_samples = [
+        '1',
+        '1.2',
+        '1.2213123123123123',
+        '123123123.123123'
+        '234234234234',
+        '-123123.123123',
+    ]
+
+    bad_samples = [
+        'a', '', '-123213,12323', '2a',
+        ' ', '@asdweq.asdad.pl', '1asd@asdasd.sadad.asdpl',
+    ]
