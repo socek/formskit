@@ -1,6 +1,6 @@
 from copy import copy
 
-from formskit.errors import BadValue, ValueNotPresent
+from formskit.errors import BadValue
 from formskit.formvalidators import FormValidationError
 
 
@@ -48,16 +48,9 @@ class Form(object):
         field.value = value
 
     def _gatherFormsData(self, data):
-        def search_for_missing_values(data):
-            for name, field in self.field_patterns.items():
-                if not name in data and not field.ignore:
-                    raise ValueNotPresent(name)
-        #----------------------------------------------------------------------
         self.fields = {}
         data = dict(data)
         data.pop(self.form_name_value)
-
-        search_for_missing_values(data)
 
         field_names = list(self.field_patterns)
 

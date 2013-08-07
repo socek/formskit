@@ -125,8 +125,6 @@ class FormTest(FormskitTestCase):
             name1: value1,
         }
 
-        self.assertRaises(ValueNotPresent, form._gatherFormsData, data)
-
         data[name2] = value2
 
         form._gatherFormsData(data)
