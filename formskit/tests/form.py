@@ -1,5 +1,7 @@
 from copy import copy
 
+from mock import MagicMock
+
 from formskit import Form, Field, Button
 from formskit.errors import BadValue, ValueNotPresent
 from formskit.tests.base import FormskitTestCase
@@ -51,12 +53,46 @@ class Form3(Form):
     name2 = 'name2'
 
     def createForm(self):
-        self.addField(Field(self.name1))
+        self.addField(Field(self.name1, label=u'my label'))
         self.addField(Field(self.name2, [NotEmpty()]))
         self.addField(Button('button', label=u'Zaloguj'))
 
 
 class FormTest(FormskitTestCase):
+
+    def test_get_label(self):
+        form = Form3()
+        self.assertEqual('my label', form.get_label('name1'))
+
+    def test_get_error(self):
+        form = Form3()
+        form.fields['something'] = [MagicMock()]
+        form.fields['something'][0].error = 'error'
+        self.assertEqual('error', form.get_error('something'))
+
+    def test_get_error_fail(self):
+        form = Form3()
+        self.assertEqual(False, form.get_error('something'))
+
+    def test_get_message(self):
+        form = Form3()
+        form.fields['something'] = [MagicMock()]
+        form.fields['something'][0].message = 'message'
+        self.assertEqual('message', form.get_message('something'))
+
+    def test_get_message_fail(self):
+        form = Form3()
+        self.assertEqual(None, form.get_message('something'))
+
+    def test_get_value(self):
+        form = Form3()
+        form.fields['something'] = [MagicMock()]
+        form.fields['something'][0].value = 'value'
+        self.assertEqual('value', form.get_value('something'))
+
+    def test_get_value_fail(self):
+        form = Form3()
+        self.assertEqual(None, form.get_value('something'))
 
     def test_name(self):
         self.assertEqual(Form1().name, 'Form1')
