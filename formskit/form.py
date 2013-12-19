@@ -155,3 +155,27 @@ class Form(object):
 
     def submit(self, data):
         pass  # pragma: no cover
+
+    def get_label(self, name):
+        return self.field_patterns[name].label
+
+    def get_error(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].error
+        return False
+
+    def get_message(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].message
+        return None
+
+    def get_value(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].value
+        return None

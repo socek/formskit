@@ -7,7 +7,7 @@ install_requires = [
 
 if __name__ == '__main__':
     setup(name='formskit',
-          version='0.3',
+          version='0.3.1',
           author=['Dominik "Socek" Długajczy'],
           author_email=['msocek@gmail.com', ],
           packages=find_packages(),
