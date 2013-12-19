@@ -67,7 +67,7 @@ class FormTest(FormskitTestCase):
         form = Form1()
         form.addField(field)
 
-        self.assertTrue(form.field_patterns.has_key(name))
+        self.assertTrue(name in form.field_patterns)
         self.assertEqual(field, form.field_patterns[name])
         self.assertEqual(form, field.form)
 
@@ -87,16 +87,16 @@ class FormTest(FormskitTestCase):
         form._assign_field_value(name2, value2)
 
         data = form.gatherDataFromFields()
-        self.assertTrue(data.has_key(name1))
-        self.assertTrue(data.has_key(name2))
+        self.assertTrue(name1 in data)
+        self.assertTrue(name2 in data)
         self.assertEqual([value1,], data[name1])
         self.assertEqual([value2,], data[name2])
 
     def test_createForm(self):
         form = Form2()
 
-        self.assertTrue(form.field_patterns.has_key(form.name1))
-        self.assertTrue(form.field_patterns.has_key(form.name2))
+        self.assertTrue(form.name1 in form.field_patterns)
+        self.assertTrue(form.name2 in form.field_patterns)
 
     def test_isThisFormSubmited(self):
         form = Form2()

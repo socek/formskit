@@ -10,8 +10,7 @@ class FormskitTestCaseType(type):
             alltests.append(cls)
 
 
-class FormskitTestCase(TestCase):
-    __metaclass__ = FormskitTestCaseType
+class FormskitTestCase(TestCase, metaclass=FormskitTestCaseType):
 
     def assertNone(self, obj):
         return self.assertEqual(None, obj)

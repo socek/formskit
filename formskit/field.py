@@ -23,7 +23,7 @@ class Field(object):
             self.message = None
             self.error = False
             return True
-        except ValidationError, ex:
+        except ValidationError as ex:
             self.message = ex.message
             self.error = True
             return False

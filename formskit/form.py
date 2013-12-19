@@ -74,7 +74,7 @@ class Form(object):
             try:
                 for formValidator in self.formValidators:
                     formValidator()
-            except FormValidationError, er:
+            except FormValidationError as er:
                 self.message = er.message
                 self.error = True
                 return False
@@ -116,7 +116,7 @@ class Form(object):
                 'dict': getattr_dict,
                 'obj_default_none': getattr_obj_default_none,
             }
-            if type(method) in [str, unicode]:
+            if type(method) == str:
                 return getattr_funs[method]
             else:
                 return method
