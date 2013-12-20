@@ -1,9 +1,7 @@
-from copy import copy
-
 from mock import MagicMock
 
 from formskit import Form, Field, Button
-from formskit.errors import BadValue, ValueNotPresent
+from formskit.errors import BadValue
 from formskit.tests.base import FormskitTestCase
 from formskit.validators import NotEmpty
 
@@ -43,8 +41,8 @@ class Form2(Form):
     name2 = 'name2'
 
     def createForm(self):
-        self.addField(Field(self.name1, [NotEmpty]))
-        self.addField(Field(self.name2, [NotEmpty]))
+        self.addField(Field(self.name1, [NotEmpty()]))
+        self.addField(Field(self.name2, [NotEmpty()]))
         self.addField(Button('button', label=u'Zaloguj'))
 
 
@@ -125,8 +123,8 @@ class FormTest(FormskitTestCase):
         data = form.gatherDataFromFields()
         self.assertTrue(name1 in data)
         self.assertTrue(name2 in data)
-        self.assertEqual([value1,], data[name1])
-        self.assertEqual([value2,], data[name2])
+        self.assertEqual([value1, ], data[name1])
+        self.assertEqual([value2, ], data[name2])
 
     def test_createForm(self):
         form = Form2()
@@ -256,6 +254,41 @@ class FormTest(FormskitTestCase):
 
         self.assertEqual(Field, type(form.fields['name1'][0]))
         self.assertEqual(1, len(form.fields['name1']))
+
+    def test_missing_value(self):
+        form = Form2()
+        result = form({
+            'form_name': ['Form2',],
+            'name1': ['one'],
+        })
+        self.assertTrue(result is False)
+
+    def test_missing_value_2(self):
+        form = Form2()
+        result = form({
+            'form_name': ['Form2',],
+            'name1': ['one'],
+            'name2': [],
+        })
+        self.assertTrue(result is False)
+
+    def test_missing_value_3(self):
+        form = Form2()
+        result = form({
+            'form_name': ['Form2',],
+            'name1': ['one'],
+            'name2': [''],
+        })
+        self.assertTrue(result is False)
+
+    def test_not_missing_value(self):
+        form = Form2()
+        result = form({
+            'form_name': ['Form2',],
+            'name1': ['one'],
+            'name2': ['two'],
+        })
+        self.assertTrue(result is True)
 
 
 class FormUpdateTest(FormskitTestCase):

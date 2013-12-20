@@ -2,6 +2,7 @@ from copy import copy
 
 from formskit.errors import BadValue
 from formskit.formvalidators import FormValidationError
+from formskit.field import Field
 
 
 class Form(object):
@@ -47,6 +48,17 @@ class Form(object):
         self.fields[name].append(field)
         field.value = value
 
+    def _assign_missing_values(self):
+        field_names = []
+        for name, value in self.field_patterns.items():
+            if not value.ignore:
+                field_names.append(name)
+
+        for name in field_names:
+            if name not in self.fields:
+                self._assign_field_value(name, None)
+
+
     def _gatherFormsData(self, data):
         self.fields = {}
         data = dict(data)
@@ -60,6 +72,8 @@ class Form(object):
                     self._assign_field_value(name, small_value)
             else:
                 raise BadValue(name)
+
+        self._assign_missing_values()
 
     def _validateFields(self):
         def validateFields():
