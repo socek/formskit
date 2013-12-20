@@ -8,6 +8,7 @@ def import_tests():
     from . import field
     from . import form
     from . import formvalidators
+    from . import errors
 
 
 def get_all_test_suite():

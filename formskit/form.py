@@ -2,6 +2,7 @@ from copy import copy
 
 from formskit.errors import BadValue
 from formskit.formvalidators import FormValidationError
+from formskit.field import Field
 
 
 class Form(object):
@@ -47,6 +48,17 @@ class Form(object):
         self.fields[name].append(field)
         field.value = value
 
+    def _assign_missing_values(self):
+        field_names = []
+        for name, value in self.field_patterns.items():
+            if not value.ignore:
+                field_names.append(name)
+
+        for name in field_names:
+            if name not in self.fields:
+                self._assign_field_value(name, None)
+
+
     def _gatherFormsData(self, data):
         self.fields = {}
         data = dict(data)
@@ -61,6 +73,8 @@ class Form(object):
             else:
                 raise BadValue(name)
 
+        self._assign_missing_values()
+
     def _validateFields(self):
         def validateFields():
             validation = True
@@ -74,7 +88,7 @@ class Form(object):
             try:
                 for formValidator in self.formValidators:
                     formValidator()
-            except FormValidationError, er:
+            except FormValidationError as er:
                 self.message = er.message
                 self.error = True
                 return False
@@ -116,7 +130,7 @@ class Form(object):
                 'dict': getattr_dict,
                 'obj_default_none': getattr_obj_default_none,
             }
-            if type(method) in [str, unicode]:
+            if type(method) == str:
                 return getattr_funs[method]
             else:
                 return method
@@ -155,3 +169,27 @@ class Form(object):
 
     def submit(self, data):
         pass  # pragma: no cover
+
+    def get_label(self, name):
+        return self.field_patterns[name].label
+
+    def get_error(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].error
+        return False
+
+    def get_message(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].message
+        return None
+
+    def get_value(self, name, index=0):
+        if name in self.fields:
+            fields = self.fields[name]
+            if len(fields) > index:
+                return fields[index].value
+        return None
