@@ -1,5 +1,6 @@
 from unittest import TestCase
 alltests = []
+from six import add_metaclass
 
 
 class FormskitTestCaseType(type):
@@ -10,7 +11,8 @@ class FormskitTestCaseType(type):
             alltests.append(cls)
 
 
-class FormskitTestCase(TestCase, metaclass=FormskitTestCaseType):
+@add_metaclass(FormskitTestCaseType)
+class FormskitTestCase(TestCase):
 
     def assertNone(self, obj):
         return self.assertEqual(None, obj)

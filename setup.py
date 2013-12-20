@@ -2,12 +2,13 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    'python-dateutil'
+    'python-dateutil',
+    'six',
 ]
 
 if __name__ == '__main__':
     setup(name='formskit',
-          version='0.3.2',
+          version='0.3.3',
           author=['Dominik "Socek" Długajczy'],
           author_email=['msocek@gmail.com', ],
           packages=find_packages(),
