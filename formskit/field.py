@@ -19,6 +19,7 @@ class Field(object):
     def validate(self):
         try:
             for validator in self.validators:
+                validator.setField(self)
                 validator(self.value)
             self.message = None
             self.error = False

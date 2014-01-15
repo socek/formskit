@@ -2,7 +2,6 @@ from copy import copy
 
 from formskit.errors import BadValue
 from formskit.formvalidators import FormValidationError
-from formskit.field import Field
 
 
 class Form(object):

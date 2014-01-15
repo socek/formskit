@@ -1,4 +1,5 @@
 from formskit.tests.base import FormskitTestCase
+from formskit.field import Field
 import formskit.validators as VAL
 
 
@@ -24,6 +25,13 @@ class ValidatorTest(FormskitTestCase):
 
         for sample in self.bad_samples:
             self.assertRaises(VAL.ValidationError, validator, sample)
+
+    def test_setForm(self):
+        field = Field('my field')
+        validator = self.cls('')
+        validator.setField(field)
+
+        self.assertEqual(field, validator.field)
 
 
 class NotEmptyValidatorTest(ValidatorTest):

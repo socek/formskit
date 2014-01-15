@@ -16,6 +16,9 @@ class Validator(object):
         if message:
             self.message = message
 
+    def setField(self, field):
+        self.field = field
+
     def __call__(self, value):
         if not self.validate(value):
             raise ValidationError(self)

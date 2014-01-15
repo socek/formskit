@@ -38,13 +38,16 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(form, field.form)
 
     def test_validate(self):
-        field = Field('name', [NotEmpty(),])
+        empty = NotEmpty()
+        field = Field('name', [empty,])
 
         self.assertEqual(False, field.validate())
+        self.assertEqual(field, empty.field)
 
         field.value = 'green'
 
         self.assertEqual(True, field.validate())
+        self.assertEqual(field, empty.field)
 
     def test_two_validators(self):
         field = Field('name', [NotEmpty(), IsDigit()])
