@@ -42,7 +42,7 @@ class NotEmptyValidatorTest(ValidatorTest):
     ]
 
     bad_samples = [
-        ' ', '', None, [], {},
+        ' ', '', None, [], {}, b'',
     ]
 
 

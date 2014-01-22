@@ -32,6 +32,8 @@ class NotEmpty(Validator):
             return False
         elif type(value) == str and value.strip() == '':
             return False
+        elif type(value) == bytes and value.strip() == b'':
+            return False
         elif type(value) in [list, dict, tuple] and len(value) == 0:
             return False
         return True
