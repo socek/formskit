@@ -45,9 +45,6 @@ class Form2(Form):
         self.addField(Field(self.name2, [NotEmpty()]))
         self.addField(Button('button', label=u'Zaloguj'))
 
-    def submit(self, data):
-        self.olddata = data
-
 
 class Form3(Form):
     name1 = 'name1'
@@ -379,4 +376,4 @@ class FormInitialDataTest(FormskitTestCase):
         self.assertEqual({
             'name1': ['one', ],
             'name2': ['iname2', ],
-        }, form.olddata)
+        }, form.data)

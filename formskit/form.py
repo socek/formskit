@@ -15,6 +15,7 @@ class Form(object):
         self.createForm()
         self.error = False
         self.message = None
+        self.data = None
 
     @property
     def name(self):
@@ -107,6 +108,7 @@ class Form(object):
         data = self.gatherDataFromFields()
         if self._validateFields():
             if self.overalValidation(data):
+                self.data = data
                 self.submit(data)
                 return True
             else:
