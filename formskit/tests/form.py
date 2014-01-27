@@ -45,6 +45,9 @@ class Form2(Form):
         self.addField(Field(self.name2, [NotEmpty()]))
         self.addField(Button('button', label=u'Zaloguj'))
 
+    def submit(self, data):
+        self.olddata = data
+
 
 class Form3(Form):
     name1 = 'name1'
@@ -258,7 +261,7 @@ class FormTest(FormskitTestCase):
     def test_missing_value(self):
         form = Form2()
         result = form({
-            'form_name': ['Form2',],
+            'form_name': ['Form2', ],
             'name1': ['one'],
         })
         self.assertTrue(result is False)
@@ -266,7 +269,7 @@ class FormTest(FormskitTestCase):
     def test_missing_value_2(self):
         form = Form2()
         result = form({
-            'form_name': ['Form2',],
+            'form_name': ['Form2', ],
             'name1': ['one'],
             'name2': [],
         })
@@ -275,7 +278,7 @@ class FormTest(FormskitTestCase):
     def test_missing_value_3(self):
         form = Form2()
         result = form({
-            'form_name': ['Form2',],
+            'form_name': ['Form2', ],
             'name1': ['one'],
             'name2': [''],
         })
@@ -284,7 +287,7 @@ class FormTest(FormskitTestCase):
     def test_not_missing_value(self):
         form = Form2()
         result = form({
-            'form_name': ['Form2',],
+            'form_name': ['Form2', ],
             'name1': ['one'],
             'name2': ['two'],
         })
@@ -355,3 +358,25 @@ class FormUpdateTest(FormskitTestCase):
 
         self.assertEqual(s9.name1, self.form.fields['name1'][0].value)
         self.assertEqual(s9.name2, self.form.fields['name2'][0].value)
+
+
+class FormInitialDataTest(FormskitTestCase):
+
+    data = {
+        'form_name': ['Form2', ],
+        'name1': ['one'],
+    }
+
+    initial_data = {
+        'name2': ['iname2'],
+        'name1': ['iname1'],
+    }
+
+    def test_simple(self):
+        """Should make initial data as default. The form data should override it."""
+        form = Form2()
+        form(self.data, initial_data=self.initial_data)
+        self.assertEqual({
+            'name1': ['one', ],
+            'name2': ['iname2', ],
+        }, form.olddata)

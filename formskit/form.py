@@ -40,11 +40,16 @@ class Form(object):
     def _isThisFormSubmited(self, data):
         return self.form_name_value in data and data[self.form_name_value] == [self.name, ]
 
-    def _assign_field_value(self, name, value):
+    def _assign_field_value(self, name, value, index=None):
         if not name in self.fields:
             self.fields[name] = []
-        field = copy(self.field_patterns[name])
-        self.fields[name].append(field)
+        if index is None:
+            index = len(self.fields[name])
+        try:
+            field = self.fields[name][index]
+        except IndexError:
+            field = copy(self.field_patterns[name])
+            self.fields[name].append(field)
         field.value = value
 
     def _assign_missing_values(self):
@@ -57,18 +62,18 @@ class Form(object):
             if name not in self.fields:
                 self._assign_field_value(name, None)
 
-
     def _gatherFormsData(self, data):
-        self.fields = {}
         data = dict(data)
-        data.pop(self.form_name_value)
+        data.pop(self.form_name_value, None)
 
         field_names = list(self.field_patterns)
 
         for name, value in data.items():
             if name in field_names:
+                index = -1
                 for small_value in value:
-                    self._assign_field_value(name, small_value)
+                    index += 1
+                    self._assign_field_value(name, small_value, index)
             else:
                 raise BadValue(name)
 
@@ -108,7 +113,9 @@ class Form(object):
                 self.error = True
         return False
 
-    def __call__(self, data):
+    def __call__(self, data, initial_data={}):
+        self.fields = {}
+        self._gatherFormsData(initial_data)
         if self._isThisFormSubmited(data):
             self._gatherFormsData(data)
             return self._validate_and_submit()
