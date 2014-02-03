@@ -29,31 +29,31 @@ class Form1(Form):
         self._test_data = data
         self.submitTest = True
 
-    def overalValidation(self, data):
+    def overal_validation(self, data):
         return self.overal
 
-    def createForm(self):
-        self.addField(Field(self.name1))
+    def create_form(self):
+        self.add_field(Field(self.name1))
 
 
 class Form2(Form):
     name1 = 'name1'
     name2 = 'name2'
 
-    def createForm(self):
-        self.addField(Field(self.name1, [NotEmpty()]))
-        self.addField(Field(self.name2, [NotEmpty()]))
-        self.addField(Button('button', label=u'Zaloguj'))
+    def create_form(self):
+        self.add_field(Field(self.name1, [NotEmpty()]))
+        self.add_field(Field(self.name2, [NotEmpty()]))
+        self.add_field(Button('button', label=u'Zaloguj'))
 
 
 class Form3(Form):
     name1 = 'name1'
     name2 = 'name2'
 
-    def createForm(self):
-        self.addField(Field(self.name1, label=u'my label'))
-        self.addField(Field(self.name2, [NotEmpty()]))
-        self.addField(Button('button', label=u'Zaloguj'))
+    def create_form(self):
+        self.add_field(Field(self.name1, label=u'my label'))
+        self.add_field(Field(self.name2, [NotEmpty()]))
+        self.add_field(Button('button', label=u'Zaloguj'))
 
 
 class FormTest(FormskitTestCase):
@@ -95,17 +95,17 @@ class FormTest(FormskitTestCase):
     def test_name(self):
         self.assertEqual(Form1().name, 'Form1')
 
-    def test_addField(self):
+    def test_add_field(self):
         name = 'rosomak'
         field = Field(name)
         form = Form1()
-        form.addField(field)
+        form.add_field(field)
 
         self.assertTrue(name in form.field_patterns)
         self.assertEqual(field, form.field_patterns[name])
         self.assertEqual(form, field.form)
 
-    def test_gatherDataFromFields(self):
+    def test_gather_data_from_fields(self):
         name1 = 'rosomak'
         value1 = 'wolverine'
         name2 = 'stefan'
@@ -115,32 +115,33 @@ class FormTest(FormskitTestCase):
         field2 = Field(name2)
 
         form = Form1()
-        form.addField(field1)
-        form.addField(field2)
+        form.add_field(field1)
+        form.add_field(field2)
         form._assign_field_value(name1, value1)
         form._assign_field_value(name2, value2)
 
-        data = form.gatherDataFromFields()
+        data = form.gather_data_from_fields()
         self.assertTrue(name1 in data)
         self.assertTrue(name2 in data)
         self.assertEqual([value1, ], data[name1])
         self.assertEqual([value2, ], data[name2])
 
-    def test_createForm(self):
+    def test_create_form(self):
         form = Form2()
 
         self.assertTrue(form.name1 in form.field_patterns)
         self.assertTrue(form.name2 in form.field_patterns)
 
-    def test_isThisFormSubmited(self):
+    def test_is_this_form_submited(self):
         form = Form2()
 
-        self.assertFalse(form._isThisFormSubmited({}))
+        self.assertFalse(form._is_this_form_submited({}))
         self.assertFalse(
-            form._isThisFormSubmited({'form_name': ['Formasd2', ]}))
-        self.assertTrue(form._isThisFormSubmited({'form_name': ['Form2', ]}))
+            form._is_this_form_submited({'form_name': ['Formasd2', ]}))
+        self.assertTrue(
+            form._is_this_form_submited({'form_name': ['Form2', ]}))
 
-    def test_gatherFormsData(self):
+    def test_gather_forms_data(self):
         form = Form1()
 
         name1 = 'name1'
@@ -148,8 +149,8 @@ class FormTest(FormskitTestCase):
 
         field1 = Field(name1)
         field2 = Field(name2)
-        form.addField(field1)
-        form.addField(field2)
+        form.add_field(field1)
+        form.add_field(field2)
 
         value1 = ['value1', ]
         value2 = ['value2', ]
@@ -161,34 +162,34 @@ class FormTest(FormskitTestCase):
 
         data[name2] = value2
 
-        form._gatherFormsData(data)
+        form._gather_forms_data(data)
 
         self.assertEqual(value1[0], form.fields[name1][0].value)
         self.assertEqual(value2[0], form.fields[name2][0].value)
 
         data['name3'] = 'value3'
-        self.assertRaises(BadValue, form._gatherFormsData, data)
+        self.assertRaises(BadValue, form._gather_forms_data, data)
 
-    def test_validateFields(self):
+    def test_validate_fields(self):
         form = Form3()
         form._assign_field_value(form.name1, '')
         form._assign_field_value(form.name2, '')
 
-        self.assertFalse(form._validateFields())
+        self.assertFalse(form._validate_fields())
         self.assertFalse(form.fields['name1'][0].error)
         self.assertTrue(form.fields['name2'][0].error)
         self.assertNone(form.fields['name1'][0].message)
         self.assertEqual(NotEmpty.message, form.fields['name2'][0].message)
 
         form.fields[form.name1][0].value = 'asasdsd'
-        self.assertFalse(form._validateFields())
+        self.assertFalse(form._validate_fields())
         self.assertFalse(form.fields['name1'][0].error)
         self.assertTrue(form.fields['name2'][0].error)
         self.assertNone(form.fields['name1'][0].message)
         self.assertEqual(NotEmpty.message, form.fields['name2'][0].message)
 
         form.fields[form.name2][0].value = 'asd'
-        self.assertTrue(form._validateFields())
+        self.assertTrue(form._validate_fields())
         self.assertFalse(form.fields['name1'][0].error)
         self.assertFalse(form.fields['name2'][0].error)
         self.assertNone(form.fields['name1'][0].message)
@@ -234,8 +235,8 @@ class FormTest(FormskitTestCase):
         button_name = 'button1'
         form = Form1()
         form.overal = True
-        form.addField(Button(button_name, 'label'))
-        form.addField(Field(good_name))
+        form.add_field(Button(button_name, 'label'))
+        form.add_field(Field(good_name))
 
         data = {
             form.form_name_value: [form.name, ],

@@ -10,7 +10,7 @@ class FormValidator(object):
 
     message = None
 
-    def setForm(self, form):
+    def set_form(self, form):
         self.form = form
 
     def __call__(self):

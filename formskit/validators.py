@@ -16,7 +16,7 @@ class Validator(object):
         if message:
             self.message = message
 
-    def setField(self, field):
+    def set_field(self, field):
         self.field = field
 
     def __call__(self, value):
@@ -28,7 +28,7 @@ class NotEmpty(Validator):
     message = u"This element is mandatory."
 
     def validate(self, value):
-        if value == None:
+        if value is None:
             return False
         elif type(value) == str and value.strip() == '':
             return False
@@ -65,6 +65,6 @@ class Email(Validator):
 
     def validate(self, value):
         if len(value) > 7:
-            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", value) != None:
+            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", value) is not None:
                 return True
         return False

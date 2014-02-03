@@ -8,28 +8,29 @@ class Form(object):
 
     form_name_value = 'form_name'
 
-    def __init__(self):
+    def __init__(self, parent=None):
         self.fields = {}
         self.field_patterns = {}
         self.formValidators = []
-        self.createForm()
         self.error = False
         self.message = None
         self.data = None
+        self.parent = parent
+        self.create_form()
 
     @property
     def name(self):
         return self.__class__.__name__
 
-    def addField(self, field):
+    def add_field(self, field):
         self.field_patterns[field.name] = field
-        field.initForm(self)
+        field.init_form(self)
 
-    def addFormValidator(self, validator):
-        validator.setForm(self)
+    def add_form_validator(self, validator):
+        validator.set_form(self)
         self.formValidators.append(validator)
 
-    def gatherDataFromFields(self):
+    def gather_data_from_fields(self):
         data = {}
         for name, fields in self.fields.items():
             data[name] = []
@@ -38,8 +39,9 @@ class Form(object):
                     data[name].append(field.value)
         return data
 
-    def _isThisFormSubmited(self, data):
-        return self.form_name_value in data and data[self.form_name_value] == [self.name, ]
+    def _is_this_form_submited(self, data):
+        return self.form_name_value in data and \
+            data[self.form_name_value] == [self.name, ]
 
     def _assign_field_value(self, name, value, index=None):
         if not name in self.fields:
@@ -63,7 +65,7 @@ class Form(object):
             if name not in self.fields:
                 self._assign_field_value(name, None)
 
-    def _gatherFormsData(self, data):
+    def _gather_forms_data(self, data):
         data = dict(data)
         data.pop(self.form_name_value, None)
 
@@ -80,8 +82,8 @@ class Form(object):
 
         self._assign_missing_values()
 
-    def _validateFields(self):
-        def validateFields():
+    def _validate_fields(self):
+        def validate_fields():
             validation = True
             for name, fields in self.fields.items():
                 if not fields[0].ignore:
@@ -89,7 +91,7 @@ class Form(object):
                         validation &= field.validate()
             return validation
 
-        def validateGlobalValidators():
+        def validate_global_validators():
             try:
                 for formValidator in self.formValidators:
                     formValidator()
@@ -99,15 +101,15 @@ class Form(object):
                 return False
             return True
         #----------------------------------------------------------------------
-        validation = validateFields()
+        validation = validate_fields()
         if validation:
-            validation = validateGlobalValidators()
+            validation = validate_global_validators()
         return validation
 
     def _validate_and_submit(self):
-        data = self.gatherDataFromFields()
-        if self._validateFields():
-            if self.overalValidation(data):
+        data = self.gather_data_from_fields()
+        if self._validate_fields():
+            if self.overal_validation(data):
                 self.data = data
                 self.submit(data)
                 return True
@@ -117,9 +119,9 @@ class Form(object):
 
     def __call__(self, data, initial_data={}):
         self.fields = {}
-        self._gatherFormsData(initial_data)
-        if self._isThisFormSubmited(data):
-            self._gatherFormsData(data)
+        self._gather_forms_data(initial_data)
+        if self._is_this_form_submited(data):
+            self._gather_forms_data(data)
             return self._validate_and_submit()
 
     def update(self, obj, names=None, method='obj', ignore_missing=False):
@@ -150,7 +152,8 @@ class Form(object):
                 return names
 
         def set_form_field(name, obj, get):
-            if not self.field_patterns[name].ignore and self.field_patterns[name].value in [None, '']:
+            if not self.field_patterns[name].ignore \
+                    and self.field_patterns[name].value in [None, '']:
                 data = get(obj, name)
                 if name in self.fields:
                     self.fields[name][0].value = data
@@ -169,10 +172,10 @@ class Form(object):
             for name in names:
                 set_form_field(name, obj, get)
 
-    def overalValidation(self, data):
+    def overal_validation(self, data):
         return True  # pragma: no cover
 
-    def createForm(self):
+    def create_form(self):
         pass  # pragma: no cover
 
     def submit(self, data):

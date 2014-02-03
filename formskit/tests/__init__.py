@@ -13,7 +13,9 @@ def import_tests():
 
 def get_all_test_suite():
     def start_logging():
-        logging.basicConfig(level=logging.INFO, format="%(asctime)-15s:%(message)s", filename='test.log')
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)-15s:%(message)s",
+                            filename='test.log')
         logging.getLogger('formskit').info('\n\t*** TESTING STARTED ***')
 
     def create_test_suit():

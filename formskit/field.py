@@ -13,13 +13,13 @@ class Field(object):
         self.message = None
         self.error = False
 
-    def initForm(self, form):
+    def init_form(self, form):
         self.form = form
 
     def validate(self):
         try:
             for validator in self.validators:
-                validator.setField(self)
+                validator.set_field(self)
                 validator(self.value)
             self.message = None
             self.error = False
@@ -29,6 +29,8 @@ class Field(object):
             self.error = True
             return False
 
+
 class Button(Field):
+
     def __init__(self, name, label):
         super(Button, self).__init__(name, label=label, ignore=True)

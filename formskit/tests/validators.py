@@ -26,10 +26,10 @@ class ValidatorTest(FormskitTestCase):
         for sample in self.bad_samples:
             self.assertRaises(VAL.ValidationError, validator, sample)
 
-    def test_setForm(self):
+    def test_set_form(self):
         field = Field('my field')
         validator = self.cls('')
-        validator.setField(field)
+        validator.set_field(field)
 
         self.assertEqual(field, validator.field)
 
@@ -57,6 +57,7 @@ class IsDigitValidatorTest(ValidatorTest):
         'a', '', '-123213.12323', '2a',
     ]
 
+
 class EmailValidatorTest(ValidatorTest):
     cls = VAL.Email
 
@@ -69,6 +70,7 @@ class EmailValidatorTest(ValidatorTest):
         'a', '', '-123213.12323', '2a',
         ' ', '@asdweq.asdad.pl', '1asd@asdasd.sadad.asdpl',
     ]
+
 
 class IsDecimalTest(ValidatorTest):
     cls = VAL.IsDecimal

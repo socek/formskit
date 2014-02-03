@@ -29,17 +29,16 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(None, field.message)
         self.assertTrue(field.ignore)
 
-
     def test_init(self):
         form = 123
         field = Field(None, None, None)
-        field.initForm(form)
+        field.init_form(form)
 
         self.assertEqual(form, field.form)
 
     def test_validate(self):
         empty = NotEmpty()
-        field = Field('name', [empty,])
+        field = Field('name', [empty, ])
 
         self.assertEqual(False, field.validate())
         self.assertEqual(field, empty.field)
