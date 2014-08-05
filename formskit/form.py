@@ -182,22 +182,29 @@ class Form(object):
         return self.field_patterns[name].label
 
     def get_error(self, name, index=0):
-        if name in self.fields:
-            fields = self.fields[name]
-            if len(fields) > index:
-                return fields[index].error
-        return False
+        field = self.get_field(name, index)
+        try:
+            return field.error
+        except AttributeError:
+            return False
 
     def get_message(self, name, index=0):
-        if name in self.fields:
-            fields = self.fields[name]
-            if len(fields) > index:
-                return fields[index].message
-        return None
+        field = self.get_field(name, index)
+        try:
+            return field.message
+        except AttributeError:
+            return None
 
     def get_value(self, name, index=0):
+        field = self.get_field(name, index)
+        try:
+            return field.value
+        except AttributeError:
+            return None
+
+    def get_field(self, name, index=0):
         if name in self.fields:
             fields = self.fields[name]
             if len(fields) > index:
-                return fields[index].value
+                return fields[index]
         return None
