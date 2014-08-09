@@ -116,11 +116,14 @@ class Form(object):
         return False
 
     def __call__(self, data, initial_data={}):
-        self.fields = {}
-        self._gatherFormsData(initial_data)
+        self.reset(initial_data)
         if self._isThisFormSubmited(data):
             self._gatherFormsData(data)
             return self._validate_and_submit()
+
+    def reset(self, initial_data={}):
+        self.fields = {}
+        self._gatherFormsData(initial_data)
 
     def update(self, obj, names=None, method='obj', ignore_missing=False):
         def getattr_obj(obj, name):
