@@ -1,6 +1,5 @@
 import logging
 import unittest
-from .base import alltests
 
 
 def import_tests():

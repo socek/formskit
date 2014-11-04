@@ -10,10 +10,10 @@ class FormValidator(object):
 
     message = None
 
-    def setForm(self, form):
+    def init_form(self, form):
         self.form = form
 
-    def __call__(self):
+    def validate(self):
         if not self.validate():
             raise FormValidationError(self)
 

@@ -3,68 +3,69 @@ import re
 from decimal import Decimal, InvalidOperation
 
 
-class ValidationError(Exception):
+class FieldValidator(object):
 
-    def __init__(self, validator):
-        self.validator = validator.__class__.__name__
-        self.message = validator.message
+    def __init__(self):
+        self.message = self.__class__.__name__
 
-
-class Validator(object):
-
-    def __init__(self, message=None):
-        if message:
-            self.message = message
-
-    def setField(self, field):
+    def init_field(self, field):
         self.field = field
 
-    def __call__(self, value):
-        if not self.validate(value):
-            raise ValidationError(self)
+    def make(self, field_value):
+        self.field_value = field_value
+        self.value = field_value.value
+        result = self.validate()
+        if result is False:
+            self.set_error()
+
+    def set_error(self):
+        self.field.set_error(self.message)
 
 
-class NotEmpty(Validator):
-    message = u"This element is mandatory."
+class FieldValueValidator(FieldValidator):
 
-    def validate(self, value):
-        if value == None:
+    def set_error(self):
+        self.field_value.set_error(self.message)
+
+
+class NotEmpty(FieldValidator):
+
+    def validate(self):
+        if self.value is None:
             return False
-        elif type(value) == str and value.strip() == '':
+        elif type(self.value) == str and self.value.strip() == '':
             return False
-        elif type(value) == bytes and value.strip() == b'':
+        elif type(self.value) == bytes and self.value.strip() == b'':
             return False
-        elif type(value) in [list, dict, tuple] and len(value) == 0:
+        elif type(self.value) in [list, dict, tuple] and len(self.value) == 0:
             return False
         return True
 
 
-class IsDigit(Validator):
-    message = u'This element must be a digit.'
+class IsDigit(FieldValueValidator):
 
-    def validate(self, value):
-        if re.search('^-{0,1}[0-9]+$', value):
-            return True
-        else:
-            return False
+    regex = re.compile('^-{0,1}[0-9]+$')
+
+    def validate(self):
+        return re.search(self.regex, self.value) is not None
 
 
-class IsDecimal(Validator):
-    message = u'This element must be a decimal.'
+class IsDecimal(FieldValueValidator):
 
-    def validate(self, value):
+    def validate(self):
         try:
-            Decimal(value)
+            Decimal(self.value)
             return True
         except InvalidOperation:
             return False
 
 
-class Email(Validator):
-    message = u"Email is not valid."
+class Email(FieldValueValidator):
 
-    def validate(self, value):
-        if len(value) > 7:
-            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", value) != None:
-                return True
+    regex = re.compile(
+        "^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$")
+
+    def validate(self):
+        if len(self.value) > 7:
+            return re.match(self.regex, self.value) is not None
         return False

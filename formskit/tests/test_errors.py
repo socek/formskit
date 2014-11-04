@@ -1,6 +1,7 @@
 from formskit.tests.base import FormskitTestCase
 from formskit import errors
 
+
 class ErrorsTests(FormskitTestCase):
 
     def test_BadValue(self):

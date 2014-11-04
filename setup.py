@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 
 install_requires = [
     'python-dateutil',
-    'six',
 ]
 
 if __name__ == '__main__':

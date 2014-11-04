@@ -1,6 +1,3 @@
-from formskit.errors import BadValue
-from formskit.formvalidators import FormValidationError
-
 from .field import Field
 
 
@@ -13,6 +10,7 @@ class Form(object):
         self.form_validators = []
         self.raw_data = None
         self.create_form()
+        self.reset()
 
     def add_field_object(self, field):
         self.field_patterns[field.name] = field
@@ -25,7 +23,8 @@ class Form(object):
         self._reset()
         if self._is_form_submitted(raw_data):
             self._parse_raw_data(raw_data)
-            return self._validate()
+            if self._validate():
+                self.submit()
         else:
             return None
 
@@ -40,51 +39,57 @@ class Form(object):
             field = self.fields[name]
             field.set_values(values)
 
-    def _reset(self):
-        for name, field in self.fields.items():
+    def reset(self):
+        self.success = None
+        for field in self.fields.values():
             field.reset()
 
-    # After refactor
+    def _validate(self):
+        return (
+            self._validate_fields()
+            # TODO: implement form validators
+            # and self._validate_form_validators()
+            and self._validate_form()
+        )
 
-    def add_form_validator(self, validator):
-        validator.set_form(self)
-        self.form_validators.append(validator)
+    def _validate_form(self):
+        return True
 
-    def _validateFields(self):
-        def validateFields():
-            validation = True
-            for name, fields in self.fields.items():
-                if not fields[0].ignore:
-                    for field in fields:
-                        validation &= field.validate()
-            return validation
-
-        def validateGlobalValidators():
-            try:
-                for formValidator in self.formValidators:
-                    formValidator()
-            except FormValidationError as er:
-                self.message = er.message
-                self.error = True
-                return False
-            return True
-        #----------------------------------------------------------------------
-        validation = validateFields()
-        if validation:
-            validation = validateGlobalValidators()
-        return validation
-
-    def _validate_and_submit(self):
-        data = self.gatherDataFromFields()
-        if self._validateFields():
-            if self.overalValidation(data):
-                self.data = data
-                self.submit(data)
-                return True
-            else:
-                self.error = True
-        return False
-
+    def _validate_fields(self):
+        success = True
+        for field in self.fields.values():
+            success &= field.validate()
+        return success
 
     def create_form(self):
-        pass  # pragma: no cover
+        pass
+
+    # TODO: implement form validators
+
+    # def add_form_validator(self, validator):
+    #     validator.set_form(self)
+    #     self.form_validators.append(validator)
+
+    # def _validateFields(self):
+    #     def validateFields():
+    #         validation = True
+    #         for name, fields in self.fields.items():
+    #             if not fields[0].ignore:
+    #                 for field in fields:
+    #                     validation &= field.validate()
+    #         return validation
+
+    #     def validateGlobalValidators():
+    #         try:
+    #             for formValidator in self.formValidators:
+    #                 formValidator()
+    #         except FormValidationError as er:
+    #             self.message = er.message
+    #             self.error = True
+    #             return False
+    #         return True
+    #     #---------------------------------------------------
+    #     validation = validateFields()
+    #     if validation:
+    #         validation = validateGlobalValidators()
+    #     return validation

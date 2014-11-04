@@ -29,14 +29,18 @@ class Field(object):
 
     def reset(self):
         self.values = []
-        self.message = None
+        self.messages = []
         self.error = False
 
     def validate(self):
         for validator in self.validators:
             for value in self.values:
-                self.error |= not validator.validate_value(value)
+                self.error |= not validator.make(value)
         return not self.error
+
+    def set_error(self, message):
+        self.error = True
+        self.messages.append(message)
 
 
 class FieldValue(object):
@@ -46,3 +50,7 @@ class FieldValue(object):
         self.value = value
         self.error = False
         self.message = None
+
+    def set_error(self, message):
+        self.error = True
+        self.message = message

@@ -1,9 +1,16 @@
 from mock import MagicMock
 
-from formskit import Form, Field, Button
+from unittest import TestCase
+from formskit import Form, Field
 from formskit.errors import BadValue
 from formskit.tests.base import FormskitTestCase
 from formskit.validators import NotEmpty
+
+
+class Button(Field):
+
+    def __init__(self, name, label):
+        super(Button, self).__init__(name, label=label, ignore=True)
 
 
 class SampleObject(object):
@@ -357,7 +364,7 @@ class FormUpdateTest(FormskitTestCase):
         self.assertEqual(s9.name2, self.form.fields['name2'][0].value)
 
 
-class FormInitialDataTest(FormskitTestCase):
+class FormInitialDataTest(TestCase):
 
     data = {
         'form_name': ['Form2', ],
@@ -373,7 +380,7 @@ class FormInitialDataTest(FormskitTestCase):
         """Should make initial data as default. The form data should override it."""
         form = Form2()
         form(self.data, initial_data=self.initial_data)
-        self.assertEqual({
+        assert {
             'name1': ['one', ],
             'name2': ['iname2', ],
-        }, form.data)
+        }, form.data

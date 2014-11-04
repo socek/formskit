@@ -1,5 +1,5 @@
 from formskit.tests.base import FormskitTestCase
-from formskit import Field, Button
+from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
 
 
@@ -29,7 +29,6 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(None, field.message)
         self.assertTrue(field.ignore)
 
-
     def test_init(self):
         form = 123
         field = Field(None, None, None)
@@ -39,7 +38,7 @@ class FieldTest(FormskitTestCase):
 
     def test_validate(self):
         empty = NotEmpty()
-        field = Field('name', [empty,])
+        field = Field('name', [empty, ])
 
         self.assertEqual(False, field.validate())
         self.assertEqual(field, empty.field)
@@ -61,11 +60,3 @@ class FieldTest(FormskitTestCase):
         field.value = '15'
 
         self.assertEqual(True, field.validate())
-
-    def test_buttons(self):
-        label = 'button test'
-        name = 'button name'
-        field = Button(name, label)
-        self.assertTrue(field.ignore)
-        self.assertEqual(name, field.name)
-        self.assertEqual(label, field.label)
