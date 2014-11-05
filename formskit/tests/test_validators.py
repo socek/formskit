@@ -31,13 +31,12 @@ class ValidatorTest(FormskitTestCase):
 
             self.validator.make(field_value)
 
+            self.assertEqual(True, self.field.error)
             if self._is_field_value_validator():
-                self.assertEqual(False, self.field.error)
                 self.assertEqual([], self.field.messages)
                 self.assertEqual(True, field_value.error, sample)
                 self.assertEqual(self.cls.__name__, field_value.message)
             else:
-                self.assertEqual(True, self.field.error)
                 self.assertEqual([self.cls.__name__], self.field.messages)
                 self.assertEqual(None, field_value.message)
                 self.assertEqual(False, field_value.error)

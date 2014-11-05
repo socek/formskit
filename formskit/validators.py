@@ -5,30 +5,43 @@ from decimal import Decimal, InvalidOperation
 
 class FieldValidator(object):
 
+    _type = 'field'
+
     def __init__(self):
         self.message = self.__class__.__name__
 
     def init_field(self, field):
         self.field = field
 
-    def make(self, field_value):
-        self.field_value = field_value
-        self.value = field_value.value
+    def set_error(self):
+        self.field.set_error(self.message)
+
+    def make(self):
         result = self.validate()
         if result is False:
             self.set_error()
 
-    def set_error(self):
-        self.field.set_error(self.message)
-
 
 class FieldValueValidator(FieldValidator):
+
+    _type = 'value'
 
     def set_error(self):
         self.field_value.set_error(self.message)
 
+    def make(self, field_value):
+        self.field_value = field_value
+        self.value = field_value.value
+        super().make()
 
-class NotEmpty(FieldValidator):
+
+class NeedToHaveValue(FieldValidator):
+
+    def validate(self):
+        return len(self.field.values) > 0
+
+
+class NotEmpty(FieldValueValidator):
 
     def validate(self):
         if self.value is None:

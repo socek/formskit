@@ -9,9 +9,15 @@ class Field(object):
         self.reset()
 
     def init_validators(self, validators=None):
-        self.validators = validators or []
-        for validator in self.validators:
+        self.field_validators = []
+        self.value_validators = []
+        validators = validators or []
+        for validator in validators:
             validator.init_field(self)
+            if validator._type == 'value':
+                self.value_validators.append(validator)
+            else:
+                self.field_validators.append(validator)
 
     def init_form(self, form):
         self.form = form
@@ -33,9 +39,13 @@ class Field(object):
         self.error = False
 
     def validate(self):
-        for validator in self.validators:
+        for validator in self.field_validators:
+            validator.make()
+        if self.error:
+            return False
+        for validator in self.value_validators:
             for value in self.values:
-                self.error |= not validator.make(value)
+                validator.make(value)
         return not self.error
 
     def set_error(self, message):
@@ -53,4 +63,5 @@ class FieldValue(object):
 
     def set_error(self, message):
         self.error = True
+        self.field.error = True
         self.message = message
