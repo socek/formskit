@@ -17,7 +17,7 @@ class ValidatorTestMixin(object):
     def test_success(self):
         for sample in self.good_samples:
             field_value = FieldValue(self.field, sample)
-            self.validator.make(field_value)
+            self.validator.make_value(field_value)
 
             self.assertEqual(False, self.field.error)
             self.assertEqual([], self.field.messages)
@@ -29,7 +29,7 @@ class ValidatorTestMixin(object):
             self.field.reset()
             field_value = FieldValue(self.field, sample)
 
-            self.validator.make(field_value)
+            self.validator.make_value(field_value)
 
             self.assertEqual(True, self.field.error)
             if self._is_field_value_validator():
@@ -42,7 +42,7 @@ class ValidatorTestMixin(object):
                 self.assertEqual(False, field_value.error)
 
     def _is_field_value_validator(self):
-        return issubclass(self.cls, VAL.FieldValueValidator)
+        return issubclass(self.cls, VAL.FieldValidator)
 
     def test_set_form(self):
         field = Field('my field')

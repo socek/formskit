@@ -13,37 +13,32 @@ class FieldValidator(object):
     def init_field(self, field):
         self.field = field
 
-    def set_error(self):
-        self.field.set_error(self.message)
+    def make_field(self):
+        if self.validate_field() is False:
+            self.set_field_error()
 
-    def make(self):
-        result = self.validate()
-        if result is False:
-            self.set_error()
-
-
-class FieldValueValidator(FieldValidator):
-
-    _type = 'value'
-
-    def set_error(self):
-        self.field_value.set_error(self.message)
-
-    def make(self, field_value):
+    def make_value(self, field_value):
         self.field_value = field_value
         self.value = field_value.value
-        super().make()
+        if self.validate_value() is False:
+            self.set_value_error()
+
+    def set_field_error(self):
+        self.field.set_error(self.message)
+
+    def set_value_error(self):
+        self.field_value.set_error(self.message)
+
+    def validate_field(self):
+        pass
 
 
-class NeedToHaveValue(FieldValidator):
+class NotEmpty(FieldValidator):
 
-    def validate(self):
+    def validate_field(self):
         return len(self.field.values) > 0
 
-
-class NotEmpty(FieldValueValidator):
-
-    def validate(self):
+    def validate_value(self):
         if self.value is None:
             return False
         elif type(self.value) == str and self.value.strip() == '':
@@ -55,17 +50,17 @@ class NotEmpty(FieldValueValidator):
         return True
 
 
-class IsDigit(FieldValueValidator):
+class IsDigit(FieldValidator):
 
     regex = re.compile('^-{0,1}[0-9]+$')
 
-    def validate(self):
+    def validate_value(self):
         return re.search(self.regex, self.value) is not None
 
 
-class IsDecimal(FieldValueValidator):
+class IsDecimal(FieldValidator):
 
-    def validate(self):
+    def validate_value(self):
         try:
             Decimal(self.value)
             return True
@@ -73,12 +68,12 @@ class IsDecimal(FieldValueValidator):
             return False
 
 
-class Email(FieldValueValidator):
+class Email(FieldValidator):
 
     regex = re.compile(
         "^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$")
 
-    def validate(self):
+    def validate_value(self):
         if len(self.value) > 7:
             return re.match(self.regex, self.value) is not None
         return False

@@ -1,6 +1,6 @@
 from formskit.tests.base import FormskitTestCase
 from formskit import Field
-from formskit.validators import NotEmpty, IsDigit, NeedToHaveValue
+from formskit.validators import NotEmpty, IsDigit
 
 
 class FieldTest(FormskitTestCase):
@@ -13,11 +13,11 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(form, field.form)
 
     def test_validate(self):
-        needtohavevalue = NeedToHaveValue()
-        field = Field('name', [needtohavevalue])
+        not_empty = NotEmpty()
+        field = Field('name', [not_empty])
 
         self.assertEqual(False, field.validate())
-        self.assertEqual(field, needtohavevalue.field)
+        self.assertEqual(field, not_empty.field)
 
         field.reset()
         field.set_values(['green'])
@@ -25,7 +25,7 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(True, field.validate())
 
     def test_two_validators(self):
-        field = Field('name', [NeedToHaveValue(), NotEmpty(), IsDigit()])
+        field = Field('name', [NotEmpty(), IsDigit()])
 
         field.validate()
         self.assertEqual(False, field.validate())
