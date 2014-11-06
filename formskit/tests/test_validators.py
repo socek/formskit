@@ -3,7 +3,7 @@ from formskit.field import Field, FieldValue
 import formskit.validators as VAL
 
 
-class ValidatorTest(FormskitTestCase):
+class ValidatorTestMixin(object):
     cls = None
     good_samples = None
     bad_samples = None
@@ -52,7 +52,7 @@ class ValidatorTest(FormskitTestCase):
         self.assertEqual(field, validator.field)
 
 
-class NotEmptyValidatorTest(ValidatorTest):
+class NotEmptyValidatorTest(ValidatorTestMixin, FormskitTestCase):
     cls = VAL.NotEmpty
 
     good_samples = [
@@ -64,7 +64,7 @@ class NotEmptyValidatorTest(ValidatorTest):
     ]
 
 
-class IsDigitValidatorTest(ValidatorTest):
+class IsDigitValidatorTest(ValidatorTestMixin, FormskitTestCase):
     cls = VAL.IsDigit
 
     good_samples = [
@@ -76,7 +76,7 @@ class IsDigitValidatorTest(ValidatorTest):
     ]
 
 
-class EmailValidatorTest(ValidatorTest):
+class EmailValidatorTest(ValidatorTestMixin, FormskitTestCase):
     cls = VAL.Email
 
     good_samples = [
@@ -90,7 +90,7 @@ class EmailValidatorTest(ValidatorTest):
     ]
 
 
-class IsDecimalTest(ValidatorTest):
+class IsDecimalTest(ValidatorTestMixin, FormskitTestCase):
     cls = VAL.IsDecimal
 
     good_samples = [

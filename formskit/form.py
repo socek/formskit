@@ -5,6 +5,10 @@ class Form(object):
 
     form_name_value = 'form_name'
 
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     def __init__(self):
         self.fields = {}
         self.form_validators = []
@@ -13,7 +17,7 @@ class Form(object):
         self.reset()
 
     def add_field_object(self, field):
-        self.field_patterns[field.name] = field
+        self.fields[field.name] = field
         field.init_form(self)
 
     def add_field(self, *args, **kwargs):
@@ -35,7 +39,7 @@ class Form(object):
         )
 
     def _parse_raw_data(self, raw_data):
-        for name, values in raw_data:
+        for name, values in raw_data.items():
             field = self.fields[name]
             field.set_values(values)
 

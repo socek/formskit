@@ -5,30 +5,6 @@ from formskit.validators import NotEmpty, IsDigit, NeedToHaveValue
 
 class FieldTest(FormskitTestCase):
 
-    # def test_creation(self):
-    #     name = 'name'
-    #     label = 'label'
-    #     validators = [None, 1]
-    #     field = Field(name, validators, label)
-
-    #     self.assertEqual(name, field.name)
-    #     self.assertEqual(label, field.label)
-    #     self.assertEqual(validators, field.validators)
-    #     self.assertEqual(None, field.value)
-    #     self.assertEqual(None, field.form)
-    #     self.assertEqual(None, field.message)
-    #     self.assertFalse(field.ignore)
-
-    #     field = Field(name, validators, label, True)
-
-    #     self.assertEqual(name, field.name)
-    #     self.assertEqual(label, field.label)
-    #     self.assertEqual(validators, field.validators)
-    #     self.assertEqual(None, field.value)
-    #     self.assertEqual(None, field.form)
-    #     self.assertEqual(None, field.message)
-    #     self.assertTrue(field.ignore)
-
     def test_init_form(self):
         form = 123
         field = Field(None, None, None)
