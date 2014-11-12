@@ -1,3 +1,7 @@
+from json import dumps
+from base64 import urlsafe_b64encode
+
+
 class Field(object):
 
     def __init__(self, name, validators=None, label=None, ignore=False):
@@ -49,6 +53,14 @@ class Field(object):
     def set_error(self, message):
         self.error = True
         self.messages.append(message)
+
+    def get_name(self):
+        data = {
+            'name': self.name,
+            'parents': self.form._get_parents(),
+        }
+        json = dumps(data)
+        return urlsafe_b64encode(json.encode())
 
 
 class FieldValue(object):

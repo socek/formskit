@@ -1,6 +1,10 @@
+from json import loads
+from base64 import urlsafe_b64decode
+
 from formskit.tests.base import FormskitTestCase
 from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
+from formskit.form import Form
 
 
 class FieldTest(FormskitTestCase):
@@ -74,3 +78,56 @@ class FieldTest(FormskitTestCase):
 
         assert field.error is True
         assert field.messages == ['msg']
+
+    def test_get_name(self):
+        form = Form()
+        field = form.add_field('name1')
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [{'name': 'Form', 'index': None}],
+        }
+
+    def test_get_name_tree(self):
+        form = Form()
+        form2 = Form()
+        field = form2.add_field('name1')
+        form.add_sub_form(form2)
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [
+                {'name': 'Form', 'index': None},
+                {'name': 'Form', 'index': 0}],
+        }
+
+    def test_get_name_tree_with_index(self):
+        form = Form()
+        form2 = Form()
+        form2.add_field('name1')
+        form.add_sub_form(form2)
+
+        field = form.get_or_create_sub_form('Form', 2).fields['name1']
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [
+                {'name': 'Form', 'index': None},
+                {'name': 'Form', 'index': 2},
+            ],
+        }
