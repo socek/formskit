@@ -1,6 +1,6 @@
-from formskit import Form, Field
+from formskit import Form
 from formskit.tests.base import FormskitTestCase
-from formskit.formvalidators import FormValidator, MustBeTheSame
+from formskit.formvalidators import MustMatch
 
 
 class Form1(Form):
@@ -8,34 +8,45 @@ class Form1(Form):
     name1 = 'something'
     name2 = 'something2'
 
-    def createForm(self):
-        self.addField(Field(self.name1))
-        self.addField(Field(self.name2))
+    def create_form(self):
+        self.add_field(self.name1)
+        self.add_field(self.name2)
 
-        self.addFormValidator(MustBeTheSame([self.name1, self.name2], 'input'))
+        self.add_form_validator(MustMatch([self.name1, self.name2]))
 
 
-# class FormValidatorTest(FormskitTestCase):
+class MustMatchTest(FormskitTestCase):
 
-#     def test_base(self):
-#         validator = FormValidator()
-#         validator.setForm(self)
+    def setUp(self):
+        super().setUp()
+        self.form = Form1()
+        self.field1 = self.form.fields[self.form.name1]
+        self.field2 = self.form.fields[self.form.name2]
 
-#         self.assertEqual(self, validator.form)
+    def test_success(self):
+        self.field1.set_values(['1'])
+        self.field2.set_values(['1'])
 
-#     def test_MustBeTheSame(self):
-#         form = Form1()
-#         form._assign_field_value(form.name1, '1')
-#         form._assign_field_value(form.name2, '2')
+        assert self.form._validate_form_validators() is True
+        assert self.form.message is None
 
-#         self.assertFalse(form._validateFields())
-#         self.assertEqual(True, form.error)
-#         self.assertEqual('input must be the same!', form.message)
+    def test_fail(self):
+        self.field1.set_values(['1'])
+        self.field2.set_values(['2'])
 
-#         form = Form1()
-#         form._assign_field_value(form.name1, '1')
-#         form._assign_field_value(form.name2, '1')
+        assert self.form._validate_form_validators() is False
+        assert self.form.message == 'input must be the same!'
 
-#         self.assertTrue(form._validateFields())
-#         self.assertEqual(False, form.error)
-#         self.assertEqual(None, form.message)
+    def test_fail_when_number_of_values_do_not_match(self):
+        self.field1.set_values(['1'])
+        self.field2.set_values([])
+
+        assert self.form._validate_form_validators() is False
+        assert self.form.message == 'input must be the same!'
+
+    def test_success_when_number_of_values_do_not_match(self):
+        self.field1.set_values(['1', '2'])
+        self.field2.set_values(['1'])
+
+        assert self.form._validate_form_validators() is True
+        assert self.form.message is None

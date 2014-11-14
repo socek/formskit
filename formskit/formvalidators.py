@@ -10,31 +10,29 @@ class FormValidator(object):
 
     message = None
 
-    def init_form(self, form):
+    def set_form(self, form):
         self.form = form
 
-    def validate(self):
+    def __call__(self):
         if not self.validate():
             raise FormValidationError(self)
 
 
-class MustBeTheSame(FormValidator):
+class MustMatch(FormValidator):
 
-    message_tpl = '%s must be the same!'
+    message = 'input must be the same!'
 
-    def __init__(self, names, label):
+    def __init__(self, names):
         self.names = names
-        self.label = label
-
-    @property
-    def message(self):
-        return self.message_tpl % (self.label,)
 
     def validate(self):
         values = []
         for name in self.names:
-            for field in self.form.fields[name]:
-                values.append(field.value)
+            field = self.form.fields[name]
+            try:
+                values.append(field.values[0].value)
+            except IndexError:
+                return False
         first = values.pop(0)
         for value in values:
             if first != value:

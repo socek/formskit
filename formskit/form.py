@@ -4,6 +4,7 @@ from json import loads
 import binascii
 
 from .field import Field
+from .formvalidators import FormValidationError
 
 
 class Form(object):
@@ -79,6 +80,7 @@ class Form(object):
 
     def reset(self):
         self.success = None
+        self.message = None
         for field in self.fields.values():
             field.reset()
         for name in self.childs:
@@ -86,17 +88,16 @@ class Form(object):
             self.childs[name][0].reset()
 
     def _validate(self):
-        self.success = (
+        # Why this method was implemented in this way?
+        # Goal was to run validation on fields and if it succeeded, then form
+        # can run form validators. But sub_forms should always run validation.
+        self.success = True
+        self.success &= (
             self._validate_fields()
-            # TODO: implement form validators
-            # and self._validate_form_validators()
-            and self._validate_form()
-            and self._validate_sub_forms()
+            and self._validate_form_validators()
         )
+        self.success &= self._validate_sub_forms()
         return self.success
-
-    def _validate_form(self):
-        return True
 
     def _validate_fields(self):
         success = True
@@ -151,35 +152,18 @@ class Form(object):
         form = self.childs[name][0]
         return deepcopy(form)
 
-    # TODO: implement form validators
+    def _validate_form_validators(self):
+        try:
+            for validator in self.form_validators:
+                validator()
+        except FormValidationError as er:
+            self.message = er.message
+            return False
+        return True
 
-    # def add_form_validator(self, validator):
-    #     validator.set_form(self)
-    #     self.form_validators.append(validator)
-
-    # def _validateFields(self):
-    #     def validateFields():
-    #         validation = True
-    #         for name, fields in self.fields.items():
-    #             if not fields[0].ignore:
-    #                 for field in fields:
-    #                     validation &= field.validate()
-    #         return validation
-
-    #     def validateGlobalValidators():
-    #         try:
-    #             for formValidator in self.formValidators:
-    #                 formValidator()
-    #         except FormValidationError as er:
-    #             self.message = er.message
-    #             self.error = True
-    #             return False
-    #         return True
-    # ---------------------------------------------------
-    #     validation = validateFields()
-    #     if validation:
-    #         validation = validateGlobalValidators()
-    #     return validation
+    def add_form_validator(self, validator):
+        validator.set_form(self)
+        self.form_validators.append(validator)
 
 
 class WrongValueName(Exception):
