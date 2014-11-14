@@ -33,13 +33,13 @@ class ValidatorTestMixin(object):
 
             self.assertEqual(True, self.field.error)
             if self._is_field_value_validator():
-                self.assertEqual([], self.field.messages)
-                self.assertEqual(True, field_value.error, sample)
-                self.assertEqual(self.cls.__name__, field_value.message)
+                assert self.field.messages == []
+                assert field_value.error is True
+                assert field_value.message.text == self.cls.__name__
             else:
-                self.assertEqual([self.cls.__name__], self.field.messages)
-                self.assertEqual(None, field_value.message)
-                self.assertEqual(False, field_value.error)
+                assert self.field.messages[0].text == self.cls.__name__
+                assert field_value.message is None
+                assert field_value.error is False
 
     def _is_field_value_validator(self):
         return issubclass(self.cls, VAL.FieldValidator)

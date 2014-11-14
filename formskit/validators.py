@@ -5,8 +5,6 @@ from decimal import Decimal, InvalidOperation
 
 class FieldValidator(object):
 
-    _type = 'field'
-
     def __init__(self):
         self.message = self.__class__.__name__
 

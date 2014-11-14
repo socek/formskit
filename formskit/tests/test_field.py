@@ -77,7 +77,7 @@ class FieldTest(FormskitTestCase):
         field.set_error('msg')
 
         assert field.error is True
-        assert field.messages == ['msg']
+        assert field.messages[0].text == 'msg'
 
     def test_get_name(self):
         form = Form()

@@ -1,6 +1,8 @@
 from json import dumps
 from base64 import urlsafe_b64encode
 
+from .messages import Message
+
 
 class Field(object):
 
@@ -50,8 +52,10 @@ class Field(object):
                 validator.make_value(value)
         return not self.error
 
-    def set_error(self, message):
+    def set_error(self, text):
         self.error = True
+        message = Message()
+        message.init(text, field=self)
         self.messages.append(message)
 
     def get_name(self):
@@ -74,4 +78,5 @@ class FieldValue(object):
     def set_error(self, message):
         self.error = True
         self.field.error = True
-        self.message = message
+        self.message = Message()
+        self.message.init(message, field=self.field, value=self)

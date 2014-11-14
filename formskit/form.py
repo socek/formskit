@@ -5,6 +5,7 @@ import binascii
 
 from .field import Field
 from .formvalidators import FormValidationError
+from .messages import Message
 
 
 class Form(object):
@@ -157,7 +158,8 @@ class Form(object):
             for validator in self.form_validators:
                 validator()
         except FormValidationError as er:
-            self.message = er.message
+            self.message = Message()
+            self.message.init(er.message, form=self)
             return False
         return True
 

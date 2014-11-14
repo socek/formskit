@@ -35,14 +35,14 @@ class MustMatchTest(FormskitTestCase):
         self.field2.set_values(['2'])
 
         assert self.form._validate_form_validators() is False
-        assert self.form.message == 'input must be the same!'
+        assert self.form.message.text == 'input must be the same!'
 
     def test_fail_when_number_of_values_do_not_match(self):
         self.field1.set_values(['1'])
         self.field2.set_values([])
 
         assert self.form._validate_form_validators() is False
-        assert self.form.message == 'input must be the same!'
+        assert self.form.message.text == 'input must be the same!'
 
     def test_success_when_number_of_values_do_not_match(self):
         self.field1.set_values(['1', '2'])
