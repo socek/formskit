@@ -2,16 +2,23 @@ from json import dumps
 from base64 import urlsafe_b64encode
 
 from .messages import Message
+from .field_convert import FakeConvert
 
 
 class Field(object):
 
-    def __init__(self, name, validators=None, label=None, ignore=False):
+    def __init__(self,
+                 name,
+                 validators=None,
+                 label=None,
+                 ignore=False,
+                 convert=FakeConvert()):
         self.name = name
         self.label = label
         self.ignore = ignore
         self.form = None
         self.init_validators(validators)
+        self.init_convert(convert)
         self.reset()
 
     def init_validators(self, validators=None):
@@ -23,6 +30,10 @@ class Field(object):
 
     def init_form(self, form):
         self.form = form
+
+    def init_convert(self, convert):
+        self.convert = convert
+        self.convert._set_field(convert)
 
     def set_values(self, values):
         if self.ignore:
@@ -57,6 +68,9 @@ class Field(object):
         message = Message()
         message.init(text, field=self)
         self.messages.append(message)
+
+    def get_value(self, index=0):
+        return self.convert(self.values[index].value)
 
     def get_name(self):
         data = {
