@@ -5,6 +5,7 @@ from pytest import raises
 from formskit.field import Field
 from formskit.form import Form, WrongValueName
 from formskit.validators import NotEmpty
+from formskit.field_convert import ToInt
 
 
 class FormTest(TestCase):
@@ -57,6 +58,65 @@ class FormTest(TestCase):
         }
         assert form(data) is False
 
+
+class TestGetAndSet(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.form = Form()
+        self.form.add_field('name')
+
+    def test_set_once(self):
+        self.form.set_value('name', 'value')
+
+        assert self.form.get_value('name') == 'value'
+        assert self.form.get_values('name') == ['value']
+
+    def test_set_once_with(self):
+        self.form.set_value('name', 'value', 1)
+        self.form.set_value('name', 'value2', 1)
+        self.form.set_value('name', 'value3', 1)
+
+        assert self.form.get_value('name', 0) == 'value'
+        assert self.form.get_value('name', 1) == 'value3'
+        assert self.form.get_values('name') == ['value', 'value3']
+
+    def test_set_many(self):
+        self.form.set_values('name', ['one', 'two'])
+
+        assert self.form.get_value('name', 0) == 'one'
+        assert self.form.get_value('name', 1) == 'two'
+        assert self.form.get_values('name') == ['one', 'two']
+
+    def test_set_many_with_converter(self):
+        self.form.add_field('name2', convert=ToInt())
+        self.form.set_values('name2', ['2', '3'])
+
+        assert self.form.get_value('name2', 0) == 2
+        assert self.form.get_value('name2', 1) == 3
+        assert self.form.get_values('name2') == [2, 3]
+
+    def test_ignore(self):
+        self.form.fields['name'].ignore = True
+
+        self.form.set_value('name', 'one')
+        self.form.set_values('name', ['one', 'two'])
+
+        assert self.form.get_values('name') == []
+
+    def test_force(self):
+        self.form.fields['name'].ignore = True
+
+        self.form.set_value('name', 'one', force=True)
+
+        assert self.form.get_values('name') == ['one']
+
+    def test_force_many(self):
+        self.form.fields['name'].ignore = True
+
+        self.form.set_values('name', ['one', 'two'], force=True)
+
+        assert self.form.get_values('name') == ['one', 'two']
 
 class IsFormSubmittedTest(TestCase):
 

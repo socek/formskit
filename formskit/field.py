@@ -35,17 +35,6 @@ class Field(object):
         self.convert = convert
         self.convert._set_field(convert)
 
-    def set_values(self, values):
-        if self.ignore:
-            return
-        for value in values:
-            self.values.append(
-                FieldValue(
-                    self,
-                    value
-                )
-            )
-
     def reset(self):
         self.values = []
         self.messages = []
@@ -71,6 +60,39 @@ class Field(object):
 
     def get_value(self, index=0):
         return self.convert(self.values[index].value)
+
+    def get_values(self):
+        return [
+            self.convert(field_value.value)
+            for field_value in self.values
+        ]
+
+    def _can_this_be_edited(self, force):
+        return force is True or self.ignore is False
+
+    def set_values(self, values, force=False):
+        if not self._can_this_be_edited(force):
+            return
+        for value in values:
+            self.values.append(
+                FieldValue(
+                    self,
+                    value
+                )
+            )
+
+    def set_value(self, value, index=0, force=False):
+        if not self._can_this_be_edited(force):
+            return
+        try:
+            field_value = self.values[index]
+            field_value.value = value
+        except IndexError:
+            self.values.append(
+                FieldValue(
+                    self,
+                    value
+                ))
 
     def get_name(self):
         data = {

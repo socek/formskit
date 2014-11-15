@@ -167,6 +167,18 @@ class Form(object):
         validator.set_form(self)
         self.form_validators.append(validator)
 
+    def get_values(self, name):
+        return self.fields[name].get_values()
+
+    def get_value(self, name, index=0):
+        return self.fields[name].get_value(index)
+
+    def set_values(self, name, values, force=False):
+        self.fields[name].set_values(values, force=force)
+
+    def set_value(self, name, value, index=0, force=False):
+        self.fields[name].set_value(value, index, force=force)
+
     def submit(self):
         pass
 

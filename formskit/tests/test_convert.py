@@ -1,6 +1,6 @@
 from formskit.tests.base import FormskitTestCase
 from formskit.field import Field
-from formskit.field_convert import FakeConvert, ToInt
+from formskit.field_convert import ToInt
 
 
 class TestFakeConvert(FormskitTestCase):
