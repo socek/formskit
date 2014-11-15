@@ -40,14 +40,14 @@ class Form(object):
             self._parse_raw_data(raw_data)
             if self._validate():
                 self.submit()
+                return True
+            else:
+                return False
         else:
             return None
 
     def _is_form_submitted(self, raw_data):
-        return (
-            self.form_name_value in raw_data
-            and raw_data[self.form_name_value] == [self.get_name(), ]
-        )
+        return raw_data.get(self.form_name_value, None) == [self.get_name(), ]
 
     def _parse_raw_data(self, raw_data):
         for name, values in raw_data.items():
@@ -166,6 +166,9 @@ class Form(object):
     def add_form_validator(self, validator):
         validator.set_form(self)
         self.form_validators.append(validator)
+
+    def submit(self):
+        pass
 
 
 class WrongValueName(Exception):

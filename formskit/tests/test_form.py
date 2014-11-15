@@ -35,6 +35,28 @@ class FormTest(TestCase):
         assert form.success is None
         field.reset.assert_called_once_with()
 
+    def test_is_validated(self):
+        form = Form()
+
+        data = {
+            form.form_name_value: [form.get_name(), ],
+        }
+        assert form(data) is True
+
+    def test_is_not_submited(self):
+        form = Form()
+
+        assert form({}) is None
+
+    def test_if_not_validated(self):
+        form = Form()
+        form.add_field('name', validators=[NotEmpty()])
+
+        data = {
+            form.form_name_value: [form.get_name(), ],
+        }
+        assert form(data) is False
+
 
 class IsFormSubmittedTest(TestCase):
 
