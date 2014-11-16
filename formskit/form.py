@@ -151,7 +151,9 @@ class Form(object):
 
     def _clone_sub_form(self, name):
         form = self.childs[name][0]
-        return deepcopy(form)
+        form = deepcopy(form)
+        form.reset()
+        return form
 
     def _validate_form_validators(self):
         try:
@@ -181,6 +183,18 @@ class Form(object):
 
     def submit(self):
         pass
+
+    def get_data_dict(self, minified=False):
+        tree = {}
+        for name, field in self.fields.items():
+            tree[name] = field.get_values()
+            if minified and len(tree[name]) == 1:
+                tree[name] = tree[name][0]
+        for name, sub_forms in self.childs.items():
+            tree[name] = {}
+            for index, sub_form in sub_forms.items():
+                tree[name][index] = sub_form.get_data_dict(minified)
+        return tree
 
 
 class WrongValueName(Exception):

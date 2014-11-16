@@ -118,6 +118,7 @@ class TestGetAndSet(TestCase):
 
         assert self.form.get_values('name') == ['one', 'two']
 
+
 class IsFormSubmittedTest(TestCase):
 
     def test_name_do_not_match(self):
@@ -230,3 +231,46 @@ class TreeFormsTest(TestCase):
 
         field = self.form.get_sub_form('Form', 3).fields['two']
         assert field.error is True
+
+
+class GetDataDict(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.form = Form()
+        self.form.add_field('name1')
+
+        subform = Form()
+        subform.add_field('name2')
+
+        self.form.add_sub_form(subform)
+
+        data = {
+            self.form.form_name_value: [self.form.get_name()],
+            self.form.fields['name1'].get_name(): ['one'],
+            self.form.get_or_create_sub_form('Form', 0).fields['name2'].get_name(): [
+                'two',
+                'three'],
+            self.form.get_or_create_sub_form('Form', 1).fields['name2'].get_name(): [
+                'four'],
+        }
+
+        self.form(data)
+
+    def test_tree(self):
+        assert self.form.get_data_dict() == {
+            'name1': ['one'],
+            'Form': {
+                0: {'name2': ['two', 'three']},
+                1: {'name2': ['four']},
+            }
+        }
+
+    def test_tree_minified(self):
+        assert self.form.get_data_dict(True) == {
+            'name1': 'one',
+            'Form': {
+                0: {'name2': ['two', 'three']},
+                1: {'name2': 'four'},
+            }
+        }
