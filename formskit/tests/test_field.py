@@ -1,5 +1,6 @@
 from json import loads
 from base64 import urlsafe_b64decode
+from pytest import raises
 
 from formskit.tests.base import FormskitTestCase
 from formskit import Field
@@ -131,3 +132,16 @@ class FieldTest(FormskitTestCase):
                 {'name': 'Form', 'index': 2},
             ],
         }
+
+    def test_index_error(self):
+        form = Form()
+        form.add_field('name')
+
+        with raises(IndexError):
+            form.get_value('name')
+
+    def test_defaul(self):
+        form = Form()
+        form.add_field('name')
+
+        assert form.get_value('name', default='elf') == 'elf'

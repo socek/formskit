@@ -58,8 +58,15 @@ class Field(object):
         message.init(text, field=self)
         self.messages.append(message)
 
-    def get_value(self, index=0):
-        return self.convert(self.values[index].value)
+    def get_value(self, index=0, default=NotImplemented):
+        try:
+            field_value = self.values[index]
+        except IndexError:
+            if default is NotImplemented:
+                raise
+            else:
+                return default
+        return self.convert(field_value.value)
 
     def get_values(self):
         return [
@@ -73,6 +80,7 @@ class Field(object):
     def set_values(self, values, force=False):
         if not self._can_this_be_edited(force):
             return
+        self.values = []
         for value in values:
             self.values.append(
                 FieldValue(

@@ -28,6 +28,10 @@ class FormTest(TestCase):
         field = create_autospec(Field('name'))
         form = Form()
         form.add_field_object(field)
+        form2 = create_autospec(Form())
+        form2_name = form2.get_name.return_value
+        form.add_sub_form(form2)
+        form.get_or_create_sub_form(form2_name, 3)
 
         form.success = False
 
@@ -35,6 +39,8 @@ class FormTest(TestCase):
 
         assert form.success is None
         field.reset.assert_called_once_with()
+        assert len(form.childs[form2_name]) == 1
+        form2.reset.assert_called_once_with()
 
     def test_is_validated(self):
         form = Form()
@@ -248,10 +254,16 @@ class GetDataDict(TestCase):
         data = {
             self.form.form_name_value: [self.form.get_name()],
             self.form.fields['name1'].get_name(): ['one'],
-            self.form.get_or_create_sub_form('Form', 0).fields['name2'].get_name(): [
+            (
+                self.form.get_or_create_sub_form('Form', 0)
+                .fields['name2'].get_name()
+            ): [
                 'two',
                 'three'],
-            self.form.get_or_create_sub_form('Form', 1).fields['name2'].get_name(): [
+            (
+                self.form.get_or_create_sub_form('Form', 1)
+                .fields['name2'].get_name()
+            ): [
                 'four'],
         }
 

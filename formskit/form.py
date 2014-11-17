@@ -35,7 +35,6 @@ class Form(object):
         return field
 
     def __call__(self, raw_data):
-        self.reset()
         if self._is_form_submitted(raw_data):
             self._parse_raw_data(raw_data)
             if self._validate():
@@ -172,8 +171,8 @@ class Form(object):
     def get_values(self, name):
         return self.fields[name].get_values()
 
-    def get_value(self, name, index=0):
-        return self.fields[name].get_value(index)
+    def get_value(self, name, index=0, default=NotImplemented):
+        return self.fields[name].get_value(index, default)
 
     def set_values(self, name, values, force=False):
         self.fields[name].set_values(values, force=force)
