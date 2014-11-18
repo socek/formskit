@@ -68,6 +68,16 @@ class Field(object):
                 return default
         return self.convert(field_value.value)
 
+    def get_value_error(self, index=0, default=NotImplemented):
+        try:
+            field_value = self.values[index]
+        except IndexError:
+            if default is NotImplemented:
+                raise
+            else:
+                return default
+        return field_value.message
+
     def get_values(self):
         return [
             self.convert(field_value.value)
