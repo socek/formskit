@@ -6,6 +6,7 @@ from formskit.tests.base import FormskitTestCase
 from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
 from formskit.form import Form
+from formskit.field import FieldValue
 
 
 class FieldTest(FormskitTestCase):
@@ -145,3 +146,23 @@ class FieldTest(FormskitTestCase):
         form.add_field('name')
 
         assert form.get_value('name', default='elf') == 'elf'
+
+
+class GetValueErrorTests(FormskitTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.field = Field('name')
+
+    def test_index_error(self):
+        with raises(IndexError):
+            self.field.get_value_error()
+
+    def test_defaul(self):
+        assert self.field.get_value_error(default='elf') == 'elf'
+
+    def test_normal(self):
+        self.field.values.append(FieldValue(self.field, 'val'))
+        self.field.values[0].message = 'my error'
+
+        assert self.field.get_value_error() == 'my error'
