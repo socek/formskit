@@ -106,3 +106,62 @@ class IsDecimalTest(ValidatorTestMixin, FormskitTestCase):
         'a', '', '-123213,12323', '2a',
         ' ', '@asdweq.asdad.pl', '1asd@asdasd.sadad.asdpl',
     ]
+
+
+class InListTest(FormskitTestCase):
+    cls = VAL.InList
+
+    def setUp(self):
+        super().setUp()
+        self.field = Field('name')
+        self.data = ['5']
+        self.validator = self.cls(self.data)
+        self.validator.init_field(self.field)
+
+    def test_good(self):
+        field_value = FieldValue(self.field, '5')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is False
+        assert self.field.messages == []
+        assert field_value.message is None
+        assert field_value.error is False
+
+    def test_fail(self):
+        field_value = FieldValue(self.field, '6')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is True
+        assert self.field.messages == []
+        assert field_value.error is True
+        assert field_value.message.text == self.cls.__name__
+
+    def test_good_method(self):
+        def method():
+            return ['4']
+
+        self.validator = self.cls(method)
+        self.validator.init_field(self.field)
+
+        field_value = FieldValue(self.field, '4')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is False
+        assert self.field.messages == []
+        assert field_value.message is None
+        assert field_value.error is False
+
+    def test_fail_method(self):
+        def method():
+            return ['4']
+
+        self.validator = self.cls(method)
+        self.validator.init_field(self.field)
+
+        field_value = FieldValue(self.field, '5')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is True
+        assert self.field.messages == []
+        assert field_value.error is True
+        assert field_value.message.text == self.cls.__name__

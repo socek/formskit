@@ -75,3 +75,18 @@ class Email(FieldValidator):
         if len(self.value) > 7:
             return re.match(self.regex, self.value) is not None
         return False
+
+
+class InList(FieldValidator):
+
+    def __init__(self, values):
+        super().__init__()
+        self.values = values
+
+    def validate_value(self):
+        values = (
+            self.values
+            if hasattr(self.values, '__contains__')
+            else self.values()
+        )
+        return self.value in values
