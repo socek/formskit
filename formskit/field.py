@@ -104,12 +104,12 @@ class Field(object):
             return
         try:
             field_value = self.values[index]
-            field_value.value = value
+            field_value.value = self.convert.back(value)
         except IndexError:
             self.values.append(
                 FieldValue(
                     self,
-                    value
+                    self.convert.back(value)
                 ))
 
     def get_name(self):

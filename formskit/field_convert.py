@@ -9,8 +9,17 @@ class FakeConvert(object):
     def convert(self, value):
         return value
 
+    def convert_back(self, value):
+        return value
+
+    def back(self, value):
+        return self.convert_back(value)
+
 
 class ToInt(FakeConvert):
 
     def convert(self, value):
         return int(value)
+
+    def convert_back(self, value):
+        return str(value)
