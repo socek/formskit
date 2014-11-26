@@ -64,6 +64,23 @@ class FormTest(TestCase):
         }
         assert form(data) is False
 
+    def test_parse_test_data(self):
+        form = Form()
+        form.add_field('name')
+        form2 = Form()
+        form2.add_field('surname')
+        form.add_sub_form(form2)
+
+        form.parse_dict({
+            'name': ['n1'],
+            'Form': [{
+                'surname': ['s1']
+            }]
+        })
+
+        assert form.get_value('name') == 'n1'
+        assert form.get_sub_form('Form', 0).get_value('surname') == 's1'
+
 
 class TestGetAndSet(TestCase):
 

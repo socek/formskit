@@ -195,6 +195,19 @@ class Form(object):
                 tree[name][index] = sub_form.get_data_dict(minified)
         return tree
 
+    def parse_dict(self, data):
+        for name, values in data.items():
+            if name in self.fields:
+                field = self.fields[name]
+                field.set_values(values)
+            else:
+                self._parse_sub_form(name, values)
+
+    def _parse_sub_form(self, name, data):
+        for index, values in enumerate(data):
+            sub_form = self.get_or_create_sub_form(name, index)
+            sub_form.parse_dict(values)
+
 
 class WrongValueName(Exception):
 
