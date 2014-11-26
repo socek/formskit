@@ -189,6 +189,8 @@ class Form(object):
             tree[name] = field.get_values()
             if minified and len(tree[name]) == 1:
                 tree[name] = tree[name][0]
+            elif minified and len(tree[name]) == 0:
+                del tree[name]
         for name, sub_forms in self.childs.items():
             tree[name] = {}
             for index, sub_form in sub_forms.items():

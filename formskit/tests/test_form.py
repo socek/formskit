@@ -282,6 +282,10 @@ class GetDataDict(TestCase):
                 .fields['name2'].get_name()
             ): [
                 'four'],
+            (
+                self.form.get_or_create_sub_form('Form', 2)
+                .fields['name2'].get_name()
+            ): [],
         }
 
         self.form(data)
@@ -292,6 +296,7 @@ class GetDataDict(TestCase):
             'Form': {
                 0: {'name2': ['two', 'three']},
                 1: {'name2': ['four']},
+                2: {'name2': []},
             }
         }
 
@@ -301,5 +306,6 @@ class GetDataDict(TestCase):
             'Form': {
                 0: {'name2': ['two', 'three']},
                 1: {'name2': 'four'},
+                2: {},
             }
         }
