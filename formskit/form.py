@@ -2,6 +2,7 @@ from base64 import urlsafe_b64decode
 from copy import deepcopy
 from json import loads
 import binascii
+from collections import Iterable
 
 from .field import Field
 from .formvalidators import FormValidationError
@@ -201,7 +202,10 @@ class Form(object):
         for name, values in data.items():
             if name in self.fields:
                 field = self.fields[name]
-                field.set_values(values)
+                if hasattr(values, '__iter__') and type(values) is not str:
+                    field.set_values(values)
+                else:
+                    field.set_value(values)
             else:
                 self._parse_sub_form(name, values)
 
