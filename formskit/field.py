@@ -113,6 +113,12 @@ class Field(object):
                 ))
 
     def get_name(self):
+        return self.name
+
+
+class TreeField(Field):
+
+    def get_name(self):
         data = {
             'name': self.name,
             'parents': self.form._get_parents(),

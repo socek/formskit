@@ -5,7 +5,7 @@ from pytest import raises
 from formskit.tests.base import FormskitTestCase
 from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
-from formskit.form import Form
+from formskit.form import Form, TreeForm
 from formskit.field import FieldValue
 
 
@@ -81,59 +81,6 @@ class FieldTest(FormskitTestCase):
         assert field.error is True
         assert field.messages[0].text == 'msg'
 
-    def test_get_name(self):
-        form = Form()
-        field = form.add_field('name1')
-
-        raw = field.get_name()
-
-        json = urlsafe_b64decode(raw).decode()
-        data = loads(json)
-
-        assert data == {
-            'name': 'name1',
-            'parents': [{'name': 'Form', 'index': None}],
-        }
-
-    def test_get_name_tree(self):
-        form = Form()
-        form2 = Form()
-        field = form2.add_field('name1')
-        form.add_sub_form(form2)
-
-        raw = field.get_name()
-
-        json = urlsafe_b64decode(raw).decode()
-        data = loads(json)
-
-        assert data == {
-            'name': 'name1',
-            'parents': [
-                {'name': 'Form', 'index': None},
-                {'name': 'Form', 'index': 0}],
-        }
-
-    def test_get_name_tree_with_index(self):
-        form = Form()
-        form2 = Form()
-        form2.add_field('name1')
-        form.add_sub_form(form2)
-
-        field = form.get_or_create_sub_form('Form', 2).fields['name1']
-
-        raw = field.get_name()
-
-        json = urlsafe_b64decode(raw).decode()
-        data = loads(json)
-
-        assert data == {
-            'name': 'name1',
-            'parents': [
-                {'name': 'Form', 'index': None},
-                {'name': 'Form', 'index': 2},
-            ],
-        }
-
     def test_index_error(self):
         form = Form()
         form.add_field('name')
@@ -146,6 +93,62 @@ class FieldTest(FormskitTestCase):
         form.add_field('name')
 
         assert form.get_value('name', default='elf') == 'elf'
+
+
+class TreeFieldTests(FormskitTestCase):
+
+    def test_get_name_tree(self):
+        form = TreeForm()
+        form2 = TreeForm()
+        field = form2.add_field('name1')
+        form.add_sub_form(form2)
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [
+                {'name': 'TreeForm', 'index': None},
+                {'name': 'TreeForm', 'index': 0}],
+        }
+
+    def test_get_name_tree_with_index(self):
+        form = TreeForm()
+        form2 = TreeForm()
+        form2.add_field('name1')
+        form.add_sub_form(form2)
+
+        field = form.get_or_create_sub_form('TreeForm', 2).fields['name1']
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [
+                {'name': 'TreeForm', 'index': None},
+                {'name': 'TreeForm', 'index': 2},
+            ],
+        }
+
+    def test_get_name(self):
+        form = TreeForm()
+        field = form.add_field('name1')
+
+        raw = field.get_name()
+
+        json = urlsafe_b64decode(raw).decode()
+        data = loads(json)
+
+        assert data == {
+            'name': 'name1',
+            'parents': [{'name': 'TreeForm', 'index': None}],
+        }
 
 
 class GetValueErrorTests(FormskitTestCase):

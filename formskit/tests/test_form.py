@@ -3,7 +3,7 @@ from unittest import TestCase
 from pytest import raises
 
 from formskit.field import Field
-from formskit.form import Form, WrongValueName
+from formskit.form import Form, TreeForm, WrongValueName
 from formskit.validators import NotEmpty
 from formskit.field_convert import ToInt
 
@@ -28,10 +28,6 @@ class FormTest(TestCase):
         field = create_autospec(Field('name'))
         form = Form()
         form.add_field_object(field)
-        form2 = create_autospec(Form())
-        form2_name = form2.get_name.return_value
-        form.add_sub_form(form2)
-        form.get_or_create_sub_form(form2_name, 3)
 
         form.success = False
 
@@ -39,8 +35,6 @@ class FormTest(TestCase):
 
         assert form.success is None
         field.reset.assert_called_once_with()
-        assert len(form.childs[form2_name]) == 1
-        form2.reset.assert_called_once_with()
 
     def test_is_validated(self):
         form = Form()
@@ -68,21 +62,65 @@ class FormTest(TestCase):
         form = Form()
         form.add_field('name')
         form.add_field('second')
-        form2 = Form()
+
+        form.parse_dict({
+            'name': ['n1'],
+            'second': 'n2',
+        })
+
+        assert form.get_value('name') == 'n1'
+        assert form.get_value('second') == 'n2'
+
+
+class TreeFormTest(TestCase):
+
+    def test_reset(self):
+        field = create_autospec(Field('name'))
+        form = TreeForm()
+        form.add_field_object(field)
+        form2 = create_autospec(TreeForm())
+        form2_name = form2.get_name.return_value
+        form.add_sub_form(form2)
+        form.get_or_create_sub_form(form2_name, 3)
+
+        form.success = False
+
+        form.reset()
+
+        assert form.success is None
+        field.reset.assert_called_once_with()
+        assert len(form.childs[form2_name]) == 1
+        form2.reset.assert_called_once_with()
+
+    def test_parse_test_data(self):
+        form = TreeForm()
+        form.add_field('name')
+        form.add_field('second')
+        form2 = TreeForm()
         form2.add_field('surname')
         form.add_sub_form(form2)
 
         form.parse_dict({
             'name': ['n1'],
             'second': 'n2',
-            'Form': [{
+            'TreeForm': [{
                 'surname': ['s1']
             }]
         })
 
         assert form.get_value('name') == 'n1'
-        assert form.get_sub_form('Form', 0).get_value('surname') == 's1'
         assert form.get_value('second') == 'n2'
+
+    def test_error_decoding_name(self):
+        form = TreeForm()
+        form.add_field('one')
+        name = form.fields['one'].get_name()
+        raw_data = {
+            name.replace(b'x', b'y'): ['value'],
+        }
+
+        with raises(WrongValueName):
+            form._parse_raw_data(raw_data)
 
 
 class TestGetAndSet(TestCase):
@@ -205,10 +243,10 @@ class ParseRawDataTest(TestCase):
 class TreeFormsTest(TestCase):
 
     def setUp(self):
-        self.form = Form()
+        self.form = TreeForm()
         self.field = self.form.add_field('one')
 
-        self.subform = Form()
+        self.subform = TreeForm()
         self.subform.add_field('two', validators=[NotEmpty()])
         self.form.add_sub_form(self.subform)
 
@@ -219,12 +257,12 @@ class TreeFormsTest(TestCase):
 
         }
         name = (
-            self.form.get_or_create_sub_form('Form', 2)
+            self.form.get_or_create_sub_form('TreeForm', 2)
             .fields['two'].get_name()
         )
         raw_data[name] = ['value2.1', 'value2.2']
         name = (
-            self.form.get_or_create_sub_form('Form', 3)
+            self.form.get_or_create_sub_form('TreeForm', 3)
             .fields['two'].get_name()
         )
         raw_data[name] = [value]
@@ -238,11 +276,11 @@ class TreeFormsTest(TestCase):
 
         assert self.form.fields['one'].values[0].value == 'value1'
 
-        field = self.form.get_sub_form('Form', 2).fields['two']
+        field = self.form.get_sub_form('TreeForm', 2).fields['two']
         assert field.values[0].value == 'value2.1'
         assert field.values[1].value == 'value2.2'
 
-        field = self.form.get_sub_form('Form', 3).fields['two']
+        field = self.form.get_sub_form('TreeForm', 3).fields['two']
         assert field.values[0].value == 'value3'
 
     def test_validation(self):
@@ -252,21 +290,50 @@ class TreeFormsTest(TestCase):
 
         assert self.form.success is False
 
-        field = self.form.get_sub_form('Form', 2).fields['two']
+        field = self.form.get_sub_form('TreeForm', 2).fields['two']
         assert field.error is False
 
-        field = self.form.get_sub_form('Form', 3).fields['two']
+        field = self.form.get_sub_form('TreeForm', 3).fields['two']
         assert field.error is True
 
 
-class GetDataDict(TestCase):
+class GetDataDictTest(TestCase):
 
     def setUp(self):
         super().setUp()
         self.form = Form()
         self.form.add_field('name1')
+        self.form.add_field('name2')
 
-        subform = Form()
+        data = {
+            self.form.form_name_value: [self.form.get_name()],
+            'name1': ['one'],
+            'name2': ['two', 'three'],
+        }
+
+        self.form(data)
+
+    def test_dict(self):
+        assert self.form.get_data_dict() == {
+            'name1': ['one'],
+            'name2': ['two', 'three'],
+        }
+
+    def test_dict_minified(self):
+        assert self.form.get_data_dict(True) == {
+            'name1': 'one',
+            'name2': ['two', 'three'],
+        }
+
+
+class GetDataDictTreeTest(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.form = TreeForm()
+        self.form.add_field('name1')
+
+        subform = TreeForm()
         subform.add_field('name2')
 
         self.form.add_sub_form(subform)
@@ -275,18 +342,18 @@ class GetDataDict(TestCase):
             self.form.form_name_value: [self.form.get_name()],
             self.form.fields['name1'].get_name(): ['one'],
             (
-                self.form.get_or_create_sub_form('Form', 0)
+                self.form.get_or_create_sub_form('TreeForm', 0)
                 .fields['name2'].get_name()
             ): [
                 'two',
                 'three'],
             (
-                self.form.get_or_create_sub_form('Form', 1)
+                self.form.get_or_create_sub_form('TreeForm', 1)
                 .fields['name2'].get_name()
             ): [
                 'four'],
             (
-                self.form.get_or_create_sub_form('Form', 2)
+                self.form.get_or_create_sub_form('TreeForm', 2)
                 .fields['name2'].get_name()
             ): [],
         }
@@ -296,7 +363,7 @@ class GetDataDict(TestCase):
     def test_tree(self):
         assert self.form.get_data_dict() == {
             'name1': ['one'],
-            'Form': {
+            'TreeForm': {
                 0: {'name2': ['two', 'three']},
                 1: {'name2': ['four']},
                 2: {'name2': []},
@@ -306,7 +373,7 @@ class GetDataDict(TestCase):
     def test_tree_minified(self):
         assert self.form.get_data_dict(True) == {
             'name1': 'one',
-            'Form': {
+            'TreeForm': {
                 0: {'name2': ['two', 'three']},
                 1: {'name2': 'four'},
                 2: {},
