@@ -79,9 +79,10 @@ class Email(FieldValidator):
 
 class InList(FieldValidator):
 
-    def __init__(self, values):
+    def __init__(self, values, message=None):
         super().__init__()
         self.values = values
+        self.message = message or self.message
 
     def validate_value(self):
         values = (
