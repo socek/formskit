@@ -139,6 +139,27 @@ class Form(object):
             else:
                 self._parse_sub_form(name, values)
 
+    def get_report(self):
+        report = {
+            'success': self.success,
+            'message': self.message,
+            'fields': {},
+        }
+        for name, field in self.fields.items():
+            values = []
+            for value in field.values:
+                values.append({
+                    'value': value.value,
+                    'success': not value.error,
+                    'message': value.message,
+                })
+            report['fields'][name] = {
+                'success': not field.error,
+                'messages': field.messages,
+                'values': values,
+            }
+        return report
+
 
 class TreeForm(Form):
 

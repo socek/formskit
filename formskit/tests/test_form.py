@@ -4,8 +4,9 @@ from pytest import raises
 
 from formskit.field import Field
 from formskit.form import Form, TreeForm, WrongValueName
-from formskit.validators import NotEmpty
+from formskit.validators import NotEmpty, IsDigit
 from formskit.field_convert import ToInt
+from formskit.formvalidators import FormValidator
 
 
 class FormTest(TestCase):
@@ -377,5 +378,141 @@ class GetDataDictTreeTest(TestCase):
                 0: {'name2': ['two', 'three']},
                 1: {'name2': 'four'},
                 2: {},
+            }
+        }
+
+
+class ExampleFormValidator(FormValidator):
+
+    def __init__(self):
+        super().__init__()
+        self._validate = True
+
+    def validate(self):
+        return self._validate
+
+
+class GetReportTest(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.form = Form()
+        self.form.add_field('name1', validators=[NotEmpty()])
+        self.form.add_field('name2', validators=[IsDigit()])
+        self.form_validator = ExampleFormValidator()
+        self.form.add_form_validator(self.form_validator)
+
+    def run_form(self):
+        data = {
+            self.form.form_name_value: [self.form.get_name()]
+        }
+        return self.form(data)
+
+    def test_success(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+        })
+        assert self.run_form() is True
+
+        assert self.form.get_report() == {
+            'success': True,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            }
+        }
+
+    def test_error_at_form_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+        })
+        self.form_validator._validate = False
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'success': False,
+            'message': self.form.message,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            }
+        }
+
+    def test_error_at_field_validator(self):
+        self.form.parse_dict({
+        })
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': False,
+                    'messages': self.form.fields['name1'].messages,
+                    'values': []
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            }
+        }
+
+    def test_error_at_field_value_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'name2': ['three']
+        })
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': False,
+                    'messages': [],
+                    'values': [{
+                        'value': 'three',
+                        'success': False,
+                        'message': self.form.fields['name2'].values[0].message,
+                    }]
+                },
             }
         }
