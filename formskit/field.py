@@ -1,7 +1,6 @@
 from json import dumps
 from base64 import urlsafe_b64encode
 
-from .messages import Message
 from .field_convert import FakeConvert
 
 
@@ -54,7 +53,7 @@ class Field(object):
 
     def set_error(self, text):
         self.error = True
-        message = Message()
+        message = self._get_message_object()
         message.init(text, field=self)
         self.messages.append(message)
 
@@ -115,6 +114,9 @@ class Field(object):
     def get_name(self):
         return self.name
 
+    def _get_message_object(self, *args, **kwargs):
+        return self.form._get_message_object(*args, **kwargs)
+
 
 class TreeField(Field):
 
@@ -138,5 +140,5 @@ class FieldValue(object):
     def set_error(self, message):
         self.error = True
         self.field.error = True
-        self.message = Message()
+        self.message = self.field._get_message_object()
         self.message.init(message, field=self.field, value=self)

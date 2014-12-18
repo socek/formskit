@@ -1,6 +1,13 @@
 from formskit.tests.base import FormskitTestCase
 from formskit.field import Field, FieldValue
+from formskit.messages import Message
 import formskit.validators as VAL
+
+
+class ExampleField(Field):
+
+    def _get_message_object(self):
+        return Message()
 
 
 class ValidatorTestMixin(object):
@@ -10,7 +17,7 @@ class ValidatorTestMixin(object):
 
     def setUp(self):
         super().setUp()
-        self.field = Field('name')
+        self.field = ExampleField('name')
         self.validator = self.cls()
         self.validator.init_field(self.field)
 
@@ -45,7 +52,7 @@ class ValidatorTestMixin(object):
         return issubclass(self.cls, VAL.FieldValidator)
 
     def test_set_form(self):
-        field = Field('my field')
+        field = ExampleField('my field')
         validator = self.cls()
         validator.init_field(field)
 
@@ -113,7 +120,7 @@ class InListTest(FormskitTestCase):
 
     def setUp(self):
         super().setUp()
-        self.field = Field('name')
+        self.field = ExampleField('name')
         self.data = ['5']
         self.validator = self.cls(self.data)
         self.validator.init_field(self.field)

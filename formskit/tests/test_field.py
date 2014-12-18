@@ -7,20 +7,27 @@ from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
 from formskit.form import Form, TreeForm
 from formskit.field import FieldValue
+from formskit.messages import Message
+
+
+class ExampleField(Field):
+
+    def _get_message_object(self):
+        return Message()
 
 
 class FieldTest(FormskitTestCase):
 
     def test_init_form(self):
         form = 123
-        field = Field(None, None, None)
+        field = ExampleField(None, None, None)
         field.init_form(form)
 
         self.assertEqual(form, field.form)
 
     def test_validate(self):
         not_empty = NotEmpty()
-        field = Field('name', [not_empty])
+        field = ExampleField('name', [not_empty])
 
         self.assertEqual(False, field.validate())
         self.assertEqual(field, not_empty.field)
@@ -31,7 +38,7 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(True, field.validate())
 
     def test_two_validators(self):
-        field = Field('name', [NotEmpty(), IsDigit()])
+        field = ExampleField('name', [NotEmpty(), IsDigit()])
 
         field.validate()
         self.assertEqual(False, field.validate())
@@ -47,7 +54,7 @@ class FieldTest(FormskitTestCase):
         self.assertEqual(True, field.validate())
 
     def test_set_values(self):
-        field = Field('name')
+        field = ExampleField('name')
 
         field.set_values(['value'])
 
@@ -55,14 +62,14 @@ class FieldTest(FormskitTestCase):
         assert 'value' == field_value.value
 
     def test_set_values_on_ignore(self):
-        field = Field('name', ignore=True)
+        field = ExampleField('name', ignore=True)
 
         field.set_values(['value'])
 
         assert 0 == len(field.values)
 
     def test_reset(self):
-        field = Field('name')
+        field = ExampleField('name')
         field.set_values(['val'])
         field.messages = ['msg']
         field.error = True
@@ -74,7 +81,7 @@ class FieldTest(FormskitTestCase):
         assert field.error is False
 
     def test_set_error(self):
-        field = Field('name')
+        field = ExampleField('name')
 
         field.set_error('msg')
 
@@ -155,7 +162,7 @@ class GetValueErrorTests(FormskitTestCase):
 
     def setUp(self):
         super().setUp()
-        self.field = Field('name')
+        self.field = ExampleField('name')
 
     def test_index_error(self):
         with raises(IndexError):

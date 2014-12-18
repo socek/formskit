@@ -11,6 +11,7 @@ from .messages import Message
 class Form(object):
 
     form_name_value = 'form_name'
+    message_class = Message
 
     def get_name(self):
         return self.__class__.__name__
@@ -94,7 +95,7 @@ class Form(object):
             for validator in self.form_validators:
                 validator()
         except FormValidationError as er:
-            self.message = Message()
+            self.message = self._get_message_object()
             self.message.init(er.message, form=self)
             return False
         return True
@@ -139,10 +140,22 @@ class Form(object):
             else:
                 self._parse_sub_form(name, values)
 
-    def get_report(self):
+    def get_report(self, compile_messages=False):
+        def do_not_compile_message(message):
+            return message
+
+        def do_compile_message(message):
+            if message:
+                return message()
+
+        if compile_messages:
+            convert = do_compile_message
+        else:
+            convert = do_not_compile_message
+
         report = {
             'success': self.success,
-            'message': self.message,
+            'message': convert(self.message),
             'fields': {},
         }
         for name, field in self.fields.items():
@@ -151,14 +164,20 @@ class Form(object):
                 values.append({
                     'value': value.value,
                     'success': not value.error,
-                    'message': value.message,
+                    'message': convert(value.message),
                 })
+            messages = [
+                convert(message) for message in field.messages
+            ]
             report['fields'][name] = {
                 'success': not field.error,
-                'messages': field.messages,
+                'messages': messages,
                 'values': values,
             }
         return report
+
+    def _get_message_object(self, *args, **kwargs):
+        return self.message_class(*args, **kwargs)
 
 
 class TreeForm(Form):

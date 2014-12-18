@@ -7,6 +7,7 @@ from formskit.form import Form, TreeForm, WrongValueName
 from formskit.validators import NotEmpty, IsDigit
 from formskit.field_convert import ToInt
 from formskit.formvalidators import FormValidator
+from formskit.messages import Message
 
 
 class FormTest(TestCase):
@@ -71,6 +72,22 @@ class FormTest(TestCase):
 
         assert form.get_value('name') == 'n1'
         assert form.get_value('second') == 'n2'
+
+    def test_messages(self):
+        class ExampleMessage(Message):
+
+            def translate(self):
+                return 'translated!'
+        form = Form()
+        form.message_class = ExampleMessage
+
+        form.add_field('name', validators=[NotEmpty()])
+
+        assert form({
+            form.form_name_value: [form.get_name()],
+        }) is False
+
+        assert form.fields['name'].messages[0]() == 'translated!'
 
 
 class TreeFormTest(TestCase):
@@ -463,18 +480,18 @@ class GetReportTest(TestCase):
             }
         }
 
-    def test_error_at_field_validator(self):
+    def test_error_at_field_validator_with_compiling(self):
         self.form.parse_dict({
         })
         assert self.run_form() is False
 
-        assert self.form.get_report() == {
+        assert self.form.get_report(True) == {
             'success': False,
             'message': None,
             'fields': {
                 'name1': {
                     'success': False,
-                    'messages': self.form.fields['name1'].messages,
+                    'messages': ['NotEmpty'],
                     'values': []
                 },
                 'name2': {
