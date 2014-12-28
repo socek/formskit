@@ -5,7 +5,8 @@ from pytest import raises
 from formskit.tests.base import FormskitTestCase
 from formskit import Field
 from formskit.validators import NotEmpty, IsDigit
-from formskit.form import Form, TreeForm
+from formskit.form import Form
+from formskit.tree_form import TreeForm
 from formskit.field import FieldValue
 from formskit.messages import Message
 
