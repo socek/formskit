@@ -533,3 +533,380 @@ class GetReportTest(TestCase):
                 },
             }
         }
+
+
+class GetReportTreeTest(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.form = TreeForm()
+        self.form.add_field('name1', validators=[NotEmpty()])
+        self.form.add_field('name2', validators=[IsDigit()])
+        self.form_validator = ExampleFormValidator()
+        self.form.add_form_validator(self.form_validator)
+        self.child = TreeForm()
+        self.child.add_field('name1', validators=[NotEmpty()])
+        self.child.add_field('name2', validators=[IsDigit()])
+        self.child_validator = ExampleFormValidator()
+        self.child.add_form_validator(self.child_validator)
+        self.form.add_sub_form(self.child)
+
+    def run_form(self):
+        data = {
+            self.form.form_name_value: [self.form.get_name()]
+        }
+        return self.form(data)
+
+    def test_success(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'TreeForm': [
+                {
+                    'name1': ['two'],
+                }
+            ]
+        })
+        assert self.run_form() is True
+
+        assert self.form.get_report() == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': [],
+                                'success': True,
+                                'values': [
+                                    {
+                                        'message': None,
+                                        'success': True,
+                                        'value': 'two'
+                                    }
+                                ]
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': None,
+                        'success': True
+                    }
+                }
+            },
+            'success': True,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            },
+        }
+
+    def test_error_at_form_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'TreeForm': [
+                {
+                    'name1': ['two'],
+                }
+            ]
+        })
+        self.form_validator._validate = False
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': [],
+                                'success': True,
+                                'values': [
+                                    {
+                                        'message': None,
+                                        'success': True,
+                                        'value': 'two'
+                                    }
+                                ]
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': None,
+                        'success': True
+                    }
+                }
+            },
+            'success': False,
+            'message': self.form.message,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            },
+        }
+
+    def test_error_at_field_validator_with_compiling(self):
+        self.form.parse_dict({
+            'TreeForm': [
+                {
+                    'name1': ['two'],
+                }
+            ]
+        })
+        assert self.run_form() is False
+
+        assert self.form.get_report(True) == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': [],
+                                'success': True,
+                                'values': [
+                                    {
+                                        'message': None,
+                                        'success': True,
+                                        'value': 'two'
+                                    }
+                                ]
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': None,
+                        'success': True
+                    }
+                }
+            },
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': False,
+                    'messages': ['NotEmpty'],
+                    'values': []
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            },
+        }
+
+    def test_error_at_field_value_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'name2': ['three'],
+            'TreeForm': [
+                {
+                    'name1': ['two'],
+                }
+            ]
+        })
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': [],
+                                'success': True,
+                                'values': [
+                                    {
+                                        'message': None,
+                                        'success': True,
+                                        'value': 'two'
+                                    }
+                                ]
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': None,
+                        'success': True
+                    }
+                }
+            },
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': False,
+                    'messages': [],
+                    'values': [{
+                        'value': 'three',
+                        'success': False,
+                        'message': self.form.fields['name2'].values[0].message,
+                    }]
+                },
+            },
+        }
+
+    def test_subform_error_at_form_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'TreeForm': [
+                {
+                    'name1': ['two'],
+                }
+            ]
+        })
+        self.child_validator._validate = False
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': [],
+                                'success': True,
+                                'values': [
+                                    {
+                                        'message': None,
+                                        'success': True,
+                                        'value': 'two'
+                                    }
+                                ]
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': self.child.message,
+                        'success': False
+                    }
+                }
+            },
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            },
+        }
+
+    def test_subform_error_at_field_value_validator(self):
+        self.form.parse_dict({
+            'name1': ['one'],
+            'TreeForm': [
+                {
+                    'name1': [],
+                }
+            ]
+        })
+        assert self.run_form() is False
+
+        assert self.form.get_report() == {
+            'childs': {
+                'TreeForm': {
+                    0: {
+                        'childs': {},
+                        'fields': {
+                            'name1': {
+                                'messages': (
+                                    self.form
+                                    .childs['TreeForm'][0]
+                                    .fields['name1'].messages
+                                ),
+                                'success': False,
+                                'values': []
+                            },
+                            'name2': {
+                                'messages': [],
+                                'success': True,
+                                'values': []
+                            }
+                        },
+                        'message': None,
+                        'success': False
+                    }
+                }
+            },
+            'success': False,
+            'message': None,
+            'fields': {
+                'name1': {
+                    'success': True,
+                    'messages': [],
+                    'values': [{
+                        'value': 'one',
+                        'success': True,
+                        'message': None,
+                    }]
+                },
+                'name2': {
+                    'success': True,
+                    'messages': [],
+                    'values': []
+                },
+            },
+        }

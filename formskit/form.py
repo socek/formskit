@@ -241,7 +241,7 @@ class TreeForm(Form):
         success = True
         for sub_forms in self.childs.values():
             for sub_form in sub_forms.values():
-                success &= sub_form._validate_fields()
+                success &= sub_form._validate()
         return success
 
     def _parse_sub_form(self, name, data):
@@ -287,6 +287,16 @@ class TreeForm(Form):
         index = parents[0]['index']
         sub_form = self.get_or_create_sub_form(form_name, index)
         return sub_form._get_sub_form(parents[1:])
+
+    def get_report(self, compile_messages=False):
+        reports = super().get_report(compile_messages=compile_messages)
+        reports['childs'] = {}
+        for name, forms in self.childs.items():
+            reports['childs'][name] = {}
+            for index, form in forms.items():
+                reports['childs'][name][index] = form.get_report(
+                    compile_messages=compile_messages)
+        return reports
 
 
 class WrongValueName(Exception):
