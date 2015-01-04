@@ -135,18 +135,10 @@ class Form(object):
             else:
                 self._parse_sub_form(name, values)
 
-    def get_report(self, compile_messages=False):
-        def do_not_compile_message(message):
-            return message
-
-        def do_compile_message(message):
+    def get_report(self):
+        def convert(message):
             if message:
                 return message()
-
-        if compile_messages:
-            convert = do_compile_message
-        else:
-            convert = do_not_compile_message
 
         report = {
             'success': self.success,

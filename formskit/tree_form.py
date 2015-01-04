@@ -115,12 +115,11 @@ class TreeForm(Form):
         sub_form = self.get_or_create_sub_form(form_name, index)
         return sub_form._get_sub_form(parents[1:])
 
-    def get_report(self, compile_messages=False):
-        reports = super().get_report(compile_messages=compile_messages)
+    def get_report(self):
+        reports = super().get_report()
         reports['childs'] = {}
         for name, forms in self.childs.items():
             reports['childs'][name] = {}
             for index, form in forms.items():
-                reports['childs'][name][index] = form.get_report(
-                    compile_messages=compile_messages)
+                reports['childs'][name][index] = form.get_report()
         return reports

@@ -238,6 +238,8 @@ class GetDataDictTest(TestCase):
 
 class ExampleFormValidator(FormValidator):
 
+    message = 'example validator'
+
     def __init__(self):
         super().__init__()
         self._validate = True
@@ -298,7 +300,7 @@ class GetReportTest(TestCase):
 
         assert self.form.get_report() == {
             'success': False,
-            'message': self.form.message,
+            'message': 'example validator',
             'fields': {
                 'name1': {
                     'success': True,
@@ -322,7 +324,7 @@ class GetReportTest(TestCase):
         })
         assert self.run_form() is False
 
-        assert self.form.get_report(True) == {
+        assert self.form.get_report() == {
             'success': False,
             'message': None,
             'fields': {
@@ -365,7 +367,7 @@ class GetReportTest(TestCase):
                     'values': [{
                         'value': 'three',
                         'success': False,
-                        'message': self.form.fields['name2'].values[0].message,
+                        'message': 'IsDigit',
                     }]
                 },
             }

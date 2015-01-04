@@ -294,7 +294,7 @@ class GetReportTreeTest(TestCase):
                 }
             },
             'success': False,
-            'message': self.form.message,
+            'message': 'example validator',
             'fields': {
                 'name1': {
                     'success': True,
@@ -323,7 +323,7 @@ class GetReportTreeTest(TestCase):
         })
         assert self.run_form() is False
 
-        assert self.form.get_report(True) == {
+        assert self.form.get_report() == {
             'childs': {
                 'TreeForm': {
                     0: {
@@ -425,7 +425,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'three',
                         'success': False,
-                        'message': self.form.fields['name2'].values[0].message,
+                        'message': 'IsDigit',
                     }]
                 },
             },
@@ -466,7 +466,7 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': self.child.message,
+                        'message': 'example validator',
                         'success': False
                     }
                 }
@@ -509,11 +509,7 @@ class GetReportTreeTest(TestCase):
                         'childs': {},
                         'fields': {
                             'name1': {
-                                'messages': (
-                                    self.form
-                                    .childs['TreeForm'][0]
-                                    .fields['name1'].messages
-                                ),
+                                'messages': ['NotEmpty'],
                                 'success': False,
                                 'values': []
                             },
@@ -550,6 +546,8 @@ class GetReportTreeTest(TestCase):
 
 
 class ExampleFormValidator(FormValidator):
+
+    message = 'example validator'
 
     def __init__(self):
         super().__init__()
