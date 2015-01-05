@@ -26,10 +26,10 @@ class ValidatorTestMixin(object):
             field_value = FieldValue(self.field, sample)
             self.validator.make_value(field_value)
 
-            self.assertEqual(False, self.field.error)
-            self.assertEqual([], self.field.messages)
-            self.assertEqual(None, field_value.message)
-            self.assertEqual(False, field_value.error)
+            assert self.field.error is False
+            assert self.field.messages == []
+            assert field_value.messages == []
+            assert field_value.error is False
 
     def test_fail(self):
         for sample in self.bad_samples:
@@ -38,14 +38,14 @@ class ValidatorTestMixin(object):
 
             self.validator.make_value(field_value)
 
-            self.assertEqual(True, self.field.error)
+            assert self.field.error is True
             if self._is_field_value_validator():
                 assert self.field.messages == []
                 assert field_value.error is True
-                assert field_value.message.text == self.cls.__name__
+                assert field_value.messages[0].text == self.cls.__name__
             else:
                 assert self.field.messages[0].text == self.cls.__name__
-                assert field_value.message is None
+                assert field_value.messages == []
                 assert field_value.error is False
 
     def _is_field_value_validator(self):
@@ -131,7 +131,7 @@ class InListTest(FormskitTestCase):
 
         assert self.field.error is False
         assert self.field.messages == []
-        assert field_value.message is None
+        assert field_value.messages == []
         assert field_value.error is False
 
     def test_fail(self):
@@ -141,7 +141,7 @@ class InListTest(FormskitTestCase):
         assert self.field.error is True
         assert self.field.messages == []
         assert field_value.error is True
-        assert field_value.message.text == self.cls.__name__
+        assert field_value.messages[0].text == self.cls.__name__
 
     def test_good_method(self):
         def method():
@@ -155,7 +155,7 @@ class InListTest(FormskitTestCase):
 
         assert self.field.error is False
         assert self.field.messages == []
-        assert field_value.message is None
+        assert field_value.messages == []
         assert field_value.error is False
 
     def test_fail_method(self):
@@ -171,4 +171,4 @@ class InListTest(FormskitTestCase):
         assert self.field.error is True
         assert self.field.messages == []
         assert field_value.error is True
-        assert field_value.message.text == self.cls.__name__
+        assert field_value.messages[0].text == self.cls.__name__

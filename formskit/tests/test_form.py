@@ -272,7 +272,7 @@ class GetReportTest(TestCase):
 
         assert self.form.get_report() == {
             'success': True,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -280,7 +280,7 @@ class GetReportTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -300,7 +300,7 @@ class GetReportTest(TestCase):
 
         assert self.form.get_report() == {
             'success': False,
-            'message': 'example validator',
+            'messages': ['example validator'],
             'fields': {
                 'name1': {
                     'success': True,
@@ -308,7 +308,7 @@ class GetReportTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -326,7 +326,7 @@ class GetReportTest(TestCase):
 
         assert self.form.get_report() == {
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': False,
@@ -350,7 +350,7 @@ class GetReportTest(TestCase):
 
         assert self.form.get_report() == {
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -358,7 +358,7 @@ class GetReportTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -367,7 +367,7 @@ class GetReportTest(TestCase):
                     'values': [{
                         'value': 'three',
                         'success': False,
-                        'message': 'IsDigit',
+                        'messages': ['IsDigit'],
                     }]
                 },
             }

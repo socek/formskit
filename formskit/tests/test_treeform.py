@@ -216,7 +216,7 @@ class GetReportTreeTest(TestCase):
                                 'success': True,
                                 'values': [
                                     {
-                                        'message': None,
+                                        'messages': [],
                                         'success': True,
                                         'value': 'two'
                                     }
@@ -228,13 +228,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': None,
+                        'messages': [],
                         'success': True
                     }
                 }
             },
             'success': True,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -242,7 +242,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -276,7 +276,7 @@ class GetReportTreeTest(TestCase):
                                 'success': True,
                                 'values': [
                                     {
-                                        'message': None,
+                                        'messages': [],
                                         'success': True,
                                         'value': 'two'
                                     }
@@ -288,13 +288,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': None,
+                        'messages': [],
                         'success': True
                     }
                 }
             },
             'success': False,
-            'message': 'example validator',
+            'messages': ['example validator'],
             'fields': {
                 'name1': {
                     'success': True,
@@ -302,7 +302,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -334,7 +334,7 @@ class GetReportTreeTest(TestCase):
                                 'success': True,
                                 'values': [
                                     {
-                                        'message': None,
+                                        'messages': [],
                                         'success': True,
                                         'value': 'two'
                                     }
@@ -346,13 +346,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': None,
+                        'messages': [],
                         'success': True
                     }
                 }
             },
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': False,
@@ -390,7 +390,7 @@ class GetReportTreeTest(TestCase):
                                 'success': True,
                                 'values': [
                                     {
-                                        'message': None,
+                                        'messages': [],
                                         'success': True,
                                         'value': 'two'
                                     }
@@ -402,13 +402,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': None,
+                        'messages': [],
                         'success': True
                     }
                 }
             },
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -416,7 +416,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -425,7 +425,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'three',
                         'success': False,
-                        'message': 'IsDigit',
+                        'messages': ['IsDigit'],
                     }]
                 },
             },
@@ -454,7 +454,7 @@ class GetReportTreeTest(TestCase):
                                 'success': True,
                                 'values': [
                                     {
-                                        'message': None,
+                                        'messages': [],
                                         'success': True,
                                         'value': 'two'
                                     }
@@ -466,13 +466,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': 'example validator',
+                        'messages': ['example validator'],
                         'success': False
                     }
                 }
             },
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -480,7 +480,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {
@@ -519,13 +519,13 @@ class GetReportTreeTest(TestCase):
                                 'values': []
                             }
                         },
-                        'message': None,
+                        'messages': [],
                         'success': False
                     }
                 }
             },
             'success': False,
-            'message': None,
+            'messages': [],
             'fields': {
                 'name1': {
                     'success': True,
@@ -533,7 +533,7 @@ class GetReportTreeTest(TestCase):
                     'values': [{
                         'value': 'one',
                         'success': True,
-                        'message': None,
+                        'messages': [],
                     }]
                 },
                 'name2': {

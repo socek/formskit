@@ -75,7 +75,7 @@ class Field(object):
                 raise
             else:
                 return default
-        return field_value.message
+        return field_value.messages
 
     def get_values(self):
         return [
@@ -135,10 +135,11 @@ class FieldValue(object):
         self.field = field
         self.value = value
         self.error = False
-        self.message = None
+        self.messages = []
 
-    def set_error(self, message):
+    def set_error(self, text):
         self.error = True
         self.field.error = True
-        self.message = self.field._get_message_object()
-        self.message.init(message, field=self.field, value=self)
+        message = self.field._get_message_object()
+        message.init(text, field=self.field, value=self)
+        self.messages.append(message)

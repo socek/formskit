@@ -174,6 +174,6 @@ class GetValueErrorTests(FormskitTestCase):
 
     def test_normal(self):
         self.field.values.append(FieldValue(self.field, 'val'))
-        self.field.values[0].message = 'my error'
+        self.field.values[0].messages = ['my error']
 
-        assert self.field.get_value_error() == 'my error'
+        assert self.field.get_value_error() == ['my error']

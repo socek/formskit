@@ -60,7 +60,7 @@ class Form(object):
 
     def reset(self):
         self.success = None
-        self.message = None
+        self.messages = []
         for field in self.fields.values():
             field.reset()
 
@@ -86,14 +86,16 @@ class Form(object):
         pass
 
     def _validate_form_validators(self):
-        try:
-            for validator in self.form_validators:
+        success = True
+        for validator in self.form_validators:
+            try:
                 validator()
-        except FormValidationError as er:
-            self.message = self._get_message_object()
-            self.message.init(er.message, form=self)
-            return False
-        return True
+            except FormValidationError as er:
+                message = self._get_message_object()
+                message.init(er.message, form=self)
+                self.messages.append(message)
+                success = False
+        return success
 
     def add_form_validator(self, validator):
         validator.set_form(self)
@@ -136,13 +138,15 @@ class Form(object):
                 self._parse_sub_form(name, values)
 
     def get_report(self):
-        def convert(message):
-            if message:
-                return message()
+        def convert(messages):
+            data = []
+            for message in messages:
+                data.append(message())
+            return data
 
         report = {
             'success': self.success,
-            'message': convert(self.message),
+            'messages': convert(self.messages),
             'fields': {},
         }
         for name, field in self.fields.items():
@@ -151,14 +155,11 @@ class Form(object):
                 values.append({
                     'value': value.value,
                     'success': not value.error,
-                    'message': convert(value.message),
+                    'messages': convert(value.messages),
                 })
-            messages = [
-                convert(message) for message in field.messages
-            ]
             report['fields'][name] = {
                 'success': not field.error,
-                'messages': messages,
+                'messages': convert(field.messages),
                 'values': values,
             }
         return report
