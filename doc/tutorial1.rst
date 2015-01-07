@@ -91,9 +91,34 @@ validation like ``NotEmpty``) and per value.
 2.1.3 Form Validators
 =====================
 
+To be able to validate form as a whole, not just fields, you can use Form
+Validators.
+
+.. code-block:: python
+
+    from formskit import Form
+    from formskit.formvalidators import MustMatch
+
+    form = Form()
+    form.add_field('password1')
+    form.add_field('password2')
+    form.add_form_validator(MustMatch(['password1', 'password2']))
+    form({
+        'form_name': [form.get_name()],
+        'password1':['password'],
+        'password2': ['password']
+    })
+    >> True
+    form({
+        'form_name': [form.get_name()],
+        'password1':['password'],
+        'password2': ['password2']
+    })
+    >> False
+
 .. todo::
 
-    This section!
+    make link to list of validators.
 
 2.1.4 Getting the data
 ======================
