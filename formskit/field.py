@@ -18,7 +18,8 @@ class Field(object):
         self.form = None
         self.init_validators(validators)
         self.init_convert(convert)
-        self.reset()
+        self.values = []
+        self.reset(True)
 
     def init_validators(self, validators=None):
         self.validators = []
@@ -34,10 +35,11 @@ class Field(object):
         self.convert = convert
         self.convert._set_field(convert)
 
-    def reset(self):
-        self.values = []
-        self.messages = []
-        self.error = False
+    def reset(self, force=False):
+        if self._can_this_be_edited(force):
+            self.values = []
+            self.messages = []
+            self.error = False
 
     def validate(self):
         for validator in self.validators:

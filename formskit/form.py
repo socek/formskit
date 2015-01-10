@@ -126,14 +126,14 @@ class Form(object):
                 del tree[name]
         return tree
 
-    def parse_dict(self, data):
+    def parse_dict(self, data, force=False):
         for name, values in data.items():
             if name in self.fields:
                 field = self.fields[name]
                 if hasattr(values, '__iter__') and type(values) is not str:
-                    field.set_values(values)
+                    field.set_values(values, force=force)
                 else:
-                    field.set_value(values)
+                    field.set_value(values, force=force)
             else:
                 self._parse_sub_form(name, values)
 

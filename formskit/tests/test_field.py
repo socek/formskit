@@ -81,6 +81,18 @@ class FieldTest(FormskitTestCase):
         assert field.messages == []
         assert field.error is False
 
+    def test_reset_on_ignore(self):
+        field = ExampleField('name', ignore=True)
+        field.set_values(['val'], True)
+        field.messages = ['msg']
+        field.error = True
+
+        field.reset()
+
+        assert field.values[0].value == 'val'
+        assert field.messages == ['msg']
+        assert field.error is True
+
     def test_set_error(self):
         field = ExampleField('name')
 

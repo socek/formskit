@@ -224,3 +224,23 @@ Thats why `myfield2` do not have 'three' value.
 
 2.1.7 Field Ignoring
 ====================
+
+There can be fields, that you want to put in the form, but do not want to be
+changed by the user. Like this:
+
+.. code-block:: python
+
+from formskit import Form
+form = Form()
+form.add_field('myfield', ignore=True)
+form.parse_dict({
+    'myfield': 'default',
+}, True)
+form({
+    'form_name': [form.get_name()],
+    'myfield': ['456'],
+})
+form.get_data_dict(True)
+>> {
+    'myfield': 'default',
+}
