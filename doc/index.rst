@@ -6,7 +6,7 @@
 Formskit
 ========
 
-``Formskit`` is validating forms more flexible.
+``Formskit`` is validating forms mechanizm made for flexibility.
 
 .. note::
 
@@ -21,6 +21,7 @@ Overall
 
    intro
    tutorial
+   api
 
 
 Indices and tables

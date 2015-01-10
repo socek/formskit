@@ -230,17 +230,67 @@ changed by the user. Like this:
 
 .. code-block:: python
 
-from formskit import Form
-form = Form()
-form.add_field('myfield', ignore=True)
-form.parse_dict({
-    'myfield': 'default',
-}, True)
-form({
-    'form_name': [form.get_name()],
-    'myfield': ['456'],
-})
-form.get_data_dict(True)
->> {
-    'myfield': 'default',
-}
+    from formskit import Form
+    form = Form()
+    form.add_field('myfield', ignore=True)
+    form.parse_dict({
+        'myfield': 'default',
+    }, True)
+    form({
+        'form_name': [form.get_name()],
+        'myfield': ['456'],
+    })
+    form.get_data_dict(True)
+    >> {
+        'myfield': 'default',
+    }
+
+2.1.8 Class Based Forms
+=======================
+
+Forms class is design to be used as subclass. For this puprose, you can use
+three methods:
+
+.. code-block:: python
+
+    def create_form(self):
+        pass
+
+    def on_success(self):
+        pass
+
+    def on_fail(self):
+        pass
+
+* `create_form` will be runned when form object will be created
+* `on_success` will be runned when validation will success
+* `on_fail` will be runned when validation will fail
+
+.. code-block:: python
+
+    from formskit import Form
+    from formskit.validators import IsDigit
+
+
+    class MyForm(Form):
+
+        def create_form(self):
+            self.add_field('myfield', validators=[IsDigit()])
+
+        def on_success(self):
+            print('success')
+
+        def on_fail(self):
+            print('fail')
+
+    form = MyForm()
+    form({
+        'form_name': [form.get_name()],
+        'myfield': ['123'],
+    })
+    # success
+    form({
+        'form_name': [form.get_name()],
+        'myfield': ['fail'],
+    })
+    # fail

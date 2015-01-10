@@ -35,9 +35,10 @@ class Form(object):
         if self._is_form_submitted(raw_data):
             self._parse_raw_data(raw_data)
             if self._validate():
-                self.submit()
+                self.on_success()
                 return True
             else:
+                self.on_fail()
                 return False
         else:
             return None
@@ -82,9 +83,6 @@ class Form(object):
             success &= field.validate()
         return success
 
-    def create_form(self):
-        pass
-
     def _validate_form_validators(self):
         success = True
         for validator in self.form_validators:
@@ -112,9 +110,6 @@ class Form(object):
 
     def set_value(self, name, value, index=0, force=False):
         self.fields[name].set_value(value, index, force=force)
-
-    def submit(self):
-        pass
 
     def get_data_dict(self, minified=False):
         tree = {}
@@ -166,6 +161,15 @@ class Form(object):
 
     def _get_message_object(self, *args, **kwargs):
         return self.message_class(*args, **kwargs)
+
+    def create_form(self):
+        pass
+
+    def on_success(self):
+        pass
+
+    def on_fail(self):
+        pass
 
 
 class WrongValueName(Exception):

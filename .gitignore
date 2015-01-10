@@ -21,3 +21,5 @@ htmlcov
 build
 dist
 commit.rst
+commit_msg.rst
+commits.rst
