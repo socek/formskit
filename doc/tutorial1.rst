@@ -182,7 +182,45 @@ converted, so convert feature is here to help you.
 2.1.6 Defaults
 ==============
 
-elo 25
+When you want to set default values, you can do this by using `parse_dict`.
+
+.. code-block:: python
+
+    from formskit import Form
+    form = Form()
+    form.add_field('myfield')
+    form.add_field('myfield2')
+    form.add_field('myfield3')
+    form.parse_dict({
+        'myfield': 'one',
+        'myfield2': ['two', 'three'],
+    })
+    form.get_data_dict()
+    >> {
+        'myfield': ['one'],
+        'myfield2': ['two', 'three'],
+        'myfield3': []
+    }
+
+As you can see, `parse_dict` can detect if we put the data in list or not. Now
+we can submit a form.
+
+.. code-block:: python
+
+    form({
+        'form_name': [form.get_name()],
+        'myfield2': ['456'],
+    })
+    form.get_data_dict()
+    >> {
+        'myfield': ['one'],
+        'myfield2': ['456'],
+        'myfield3': []
+    }
+
+New values will make field to reset (so old default values will be removed).
+Thats why `myfield2` do not have 'three' value.
+
 
 2.1.7 Field Ignoring
 ====================
