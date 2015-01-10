@@ -10,7 +10,8 @@ Formskit
 
 .. note::
 
-    Version of the doc: 0.1
+    .. include:: commit.rst
+    .. include:: commit_msg.rst
 
 Overall
 =======
