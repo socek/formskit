@@ -1,8 +1,8 @@
 =================
-2.1 Base Tutorial
+2.1 Base tutorial
 =================
 
-2.1.1 First Form
+2.1.1 First form
 ================
 
 Formskit was designed to make forms as simple as possible.
@@ -40,7 +40,7 @@ To get all the validated data, just user .get_data_dict method.
 ``True`` in the argument list enables minifing, to if there is only 1 value,
 then there will be no list.
 
-2.1.2 Field Validators
+2.1.2 Field validators
 ======================
 
 To add validators, just append it to the ``.add_field`` method. In the next
@@ -89,7 +89,7 @@ validation like ``NotEmpty``) and per value.
 
     make link to list of validators.
 
-2.1.3 Form Validators
+2.1.3 Form validators
 =====================
 
 To be able to validate form as a whole, not just fields, you can use Form
@@ -222,7 +222,7 @@ New values will make field to reset (so old default values will be removed).
 Thats why `myfield2` do not have 'three' value.
 
 
-2.1.7 Field Ignoring
+2.1.7 Field ignoring
 ====================
 
 There can be fields, that you want to put in the form, but do not want to be
@@ -245,7 +245,7 @@ changed by the user. Like this:
         'myfield': 'default',
     }
 
-2.1.8 Class Based Forms
+2.1.8 Class based forms
 =======================
 
 Forms class is design to be used as subclass. For this puprose, you can use
@@ -294,3 +294,4 @@ three methods:
         'myfield': ['fail'],
     })
     # fail
+
