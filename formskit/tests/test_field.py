@@ -8,13 +8,13 @@ from formskit.validators import NotEmpty, IsDigit
 from formskit.form import Form
 from formskit.tree_form import TreeForm
 from formskit.field import FieldValue
-from formskit.messages import Message
+from formskit.translation import Translation
 
 
 class ExampleField(Field):
 
     def _get_message_object(self):
-        return Message()
+        return Translation()
 
 
 class FieldTest(FormskitTestCase):

@@ -7,7 +7,7 @@ from formskit.form import Form, WrongValueName
 from formskit.validators import NotEmpty, IsDigit
 from formskit.field_convert import ToInt
 from formskit.formvalidators import FormValidator
-from formskit.messages import Message
+from formskit.translation import Translation
 
 
 class FormTest(TestCase):
@@ -74,12 +74,12 @@ class FormTest(TestCase):
         assert form.get_value('second') == 'n2'
 
     def test_messages(self):
-        class ExampleMessage(Message):
+        class ExampleTranslation(Translation):
 
             def translate(self):
                 return 'translated!'
         form = Form()
-        form.message_class = ExampleMessage
+        form.translation_class = ExampleTranslation
 
         form.add_field('name', validators=[NotEmpty()])
 

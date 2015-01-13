@@ -1,12 +1,12 @@
 from .field import Field
 from .formvalidators import FormValidationError
-from .messages import Message
+from .translation import Translation
 
 
 class Form(object):
 
     form_name_value = 'form_name'
-    message_class = Message
+    translation_class = Translation
 
     def get_name(self):
         return self.__class__.__name__
@@ -160,7 +160,7 @@ class Form(object):
         return report
 
     def _get_message_object(self, *args, **kwargs):
-        return self.message_class(*args, **kwargs)
+        return self.translation_class(*args, **kwargs)
 
     def create_form(self):
         pass

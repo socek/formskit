@@ -9,15 +9,15 @@ From prevoiuse chapters, you could see that .get_report is returning simple
 texts, not whole error text For example, NotEmpty validator returns only
 'NotEmpty' text. It is because no translation system is implemented, so the
 system only returns validator name. To use translation system you need to make
-a subclass of Message, and put it into your Form.
+a subclass of Translation, and put it into your Form.
 
 .. code-block:: python
 
     from formskit import Form
     from formskit.validators import NotEmpty
-    from formskit.messages import Message
+    from formskit.translation import Translation
 
-    class Translated(Message):
+    class Translated(Translation):
         _translations = {
             'NotEmpty': 'This field ca not be empty.',
         }
@@ -25,7 +25,7 @@ a subclass of Message, and put it into your Form.
             return self._translations[self.text]
 
     class MyForm(Form):
-        message_class = Translated
+        translation_class = Translated
         def create_form(self):
             self.add_field('myfield', validators=[NotEmpty()])
 
@@ -66,9 +66,9 @@ Example:
 
     from formskit import Form
     from formskit.validators import NotEmpty
-    from formskit.messages import Message
+    from formskit.translation import Translation
 
-    class Translated(Message):
+    class Translated(Translation):
         _translations = {
             'NotEmpty': 'This field ca not be empty: {field.name}.',
         }
@@ -76,7 +76,7 @@ Example:
             return self._translations[self.text]
 
     class MyForm(Form):
-        message_class = Translated
+        translation_class = Translated
         def create_form(self):
             self.add_field('myfield', validators=[NotEmpty()])
 

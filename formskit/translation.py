@@ -1,4 +1,4 @@
-class Message(object):
+class Translation(object):
 
     def __init__(self, copy=None):
         if copy:

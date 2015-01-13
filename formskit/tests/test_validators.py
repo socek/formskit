@@ -1,13 +1,13 @@
 from formskit.tests.base import FormskitTestCase
 from formskit.field import Field, FieldValue
-from formskit.messages import Message
+from formskit.translation import Translation
 import formskit.validators as VAL
 
 
 class ExampleField(Field):
 
     def _get_message_object(self):
-        return Message()
+        return Translation()
 
 
 class ValidatorTestMixin(object):
