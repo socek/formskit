@@ -44,12 +44,12 @@ class FormTest(TestCase):
         data = {
             form.form_name_value: [form.get_name(), ],
         }
-        assert form(data) is True
+        assert form.validate(data) is True
 
     def test_is_not_submited(self):
         form = Form()
 
-        assert form({}) is None
+        assert form.validate({}) is None
 
     def test_if_not_validated(self):
         form = Form()
@@ -58,7 +58,7 @@ class FormTest(TestCase):
         data = {
             form.form_name_value: [form.get_name(), ],
         }
-        assert form(data) is False
+        assert form.validate(data) is False
 
     def test_parse_test_data(self):
         form = Form()
@@ -83,7 +83,7 @@ class FormTest(TestCase):
 
         form.add_field('name', validators=[NotEmpty()])
 
-        assert form({
+        assert form.validate({
             form.form_name_value: [form.get_name()],
         }) is False
 
@@ -221,7 +221,7 @@ class GetDataDictTest(TestCase):
             'name2': ['two', 'three'],
         }
 
-        self.form(data)
+        self.form.validate(data)
 
     def test_dict(self):
         assert self.form.get_data_dict() == {
@@ -262,7 +262,7 @@ class GetReportTest(TestCase):
         data = {
             self.form.form_name_value: [self.form.get_name()]
         }
-        return self.form(data)
+        return self.form.validate(data)
 
     def test_success(self):
         self.form.parse_dict({

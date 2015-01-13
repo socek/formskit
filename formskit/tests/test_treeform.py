@@ -92,7 +92,7 @@ class TreeFormsTest(TestCase):
     def test_parse_tree(self):
         raw_data = self._get_raw_data()
 
-        self.form(raw_data)
+        self.form.validate(raw_data)
 
         assert self.form.fields['one'].values[0].value == 'value1'
 
@@ -106,7 +106,7 @@ class TreeFormsTest(TestCase):
     def test_validation(self):
         raw_data = self._get_raw_data('')
 
-        self.form(raw_data)
+        self.form.validate(raw_data)
 
         assert self.form.success is False
 
@@ -149,7 +149,7 @@ class GetDataDictTreeTest(TestCase):
             ): [],
         }
 
-        self.form(data)
+        self.form.validate(data)
 
     def test_tree(self):
         assert self.form.get_data_dict() == {
@@ -192,7 +192,7 @@ class GetReportTreeTest(TestCase):
         data = {
             self.form.form_name_value: [self.form.get_name()]
         }
-        return self.form(data)
+        return self.form.validate(data)
 
     def test_success(self):
         self.form.parse_dict({

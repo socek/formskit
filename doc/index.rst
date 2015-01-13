@@ -21,7 +21,7 @@ Overall
 
    intro
    tutorial
-   api
+   api/index
 
 
 Indices and tables

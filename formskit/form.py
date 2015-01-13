@@ -9,6 +9,7 @@ class Form(object):
     translation_class = Translation
 
     def get_name(self):
+        """Gets name of this form."""
         return self.__class__.__name__
 
     def __init__(self):
@@ -23,15 +24,29 @@ class Form(object):
         self.index = None
 
     def add_field_object(self, field):
+        """Add field to form.
+
+        :param field: field object
+        """
         self.fields[field.name] = field
         field.init_form(self)
 
     def add_field(self, *args, **kwargs):
+        """Create and add field to form.
+        Params are the same as in ``Field`` init.
+        """
         field = Field(*args, **kwargs)
         self.add_field_object(field)
         return field
 
-    def __call__(self, raw_data):
+    def validate(self, raw_data):
+        """Gets raw data from dict and validate this object.
+
+        :returns:
+            * None: if form is not submited
+            * True: if form is submited, and validation is success
+            * Fail: if form is submited, and validation is fails
+        """
         if self._is_form_submitted(raw_data):
             self._parse_raw_data(raw_data)
             if self._validate():

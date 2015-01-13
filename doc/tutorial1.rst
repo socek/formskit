@@ -19,7 +19,7 @@ because there can be many values for one field.
 
 .. code-block:: python
 
-    form({'form_name': [form.get_name()], 'myfield':['value']})
+    form.validate({'form_name': [form.get_name()], 'myfield':['value']})
     >> True
 
 Form call will return ``True`` if form is successfully validated, ``False`` if
@@ -53,9 +53,9 @@ not made only from digits.
     from formskit.validators import IsDigit
     form = Form()
     form.add_field('myfield', validators=[IsDigit()])
-    form({'form_name': [form.get_name()], 'myfield':['123']})
+    form.validate({'form_name': [form.get_name()], 'myfield':['123']})
     >> True
-    form({'form_name': [form.get_name()], 'myfield':['123.1']})
+    form.validate({'form_name': [form.get_name()], 'myfield':['123.1']})
     >> False
     form.get_report()
     >> {
@@ -104,13 +104,13 @@ Validators.
     form.add_field('password1')
     form.add_field('password2')
     form.add_form_validator(MustMatch(['password1', 'password2']))
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'password1':['password'],
         'password2': ['password']
     })
     >> True
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'password1':['password'],
         'password2': ['password2']
@@ -134,7 +134,7 @@ dict object.
     form.add_field('myfield')
     form.add_field('second_field')
     form.add_field('this_will_be_empty')
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield':['123.1'],
         'second_field': ['something', 'something2']
@@ -172,7 +172,7 @@ converted, so convert feature is here to help you.
     from formskit.field_convert import ToInt
     form = Form()
     form.add_field('myfield', convert=ToInt())
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield':['123'],
     })
@@ -207,7 +207,7 @@ we can submit a form.
 
 .. code-block:: python
 
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield2': ['456'],
     })
@@ -236,7 +236,7 @@ changed by the user. Like this:
     form.parse_dict({
         'myfield': 'default',
     }, True)
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield': ['456'],
     })
@@ -284,12 +284,12 @@ three methods:
             print('fail')
 
     form = MyForm()
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield': ['123'],
     })
     # success
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield': ['fail'],
     })

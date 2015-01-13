@@ -30,7 +30,7 @@ a subclass of Translation, and put it into your Form.
             self.add_field('myfield', validators=[NotEmpty()])
 
     form = MyForm()
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield': [],
     })
@@ -81,7 +81,7 @@ Example:
             self.add_field('myfield', validators=[NotEmpty()])
 
     form = MyForm()
-    form({
+    form.validate({
         'form_name': [form.get_name()],
         'myfield': [],
     })
