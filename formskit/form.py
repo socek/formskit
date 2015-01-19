@@ -24,7 +24,8 @@ class Form(object):
         self.index = None
 
     def add_field_object(self, field):
-        """Add field to form.
+        """
+        Add field to form.
 
         :param field: field object
         """
@@ -32,7 +33,8 @@ class Form(object):
         field.init_form(self)
 
     def add_field(self, *args, **kwargs):
-        """Create and add field to form.
+        """
+        Create and add field to form.
         Params are the same as in ``Field`` init.
         """
         field = Field(*args, **kwargs)
@@ -40,7 +42,8 @@ class Form(object):
         return field
 
     def validate(self, raw_data):
-        """Gets raw data from dict and validate this object.
+        """
+        Gets raw data from dict and validate this object.
 
         :returns:
             * None: if form is not submited
@@ -75,6 +78,7 @@ class Form(object):
             raise WrongValueName(name)
 
     def reset(self):
+        """Reset the form and clear all it's fields."""
         self.success = None
         self.messages = []
         for field in self.fields.values():
@@ -111,22 +115,64 @@ class Form(object):
         return success
 
     def add_form_validator(self, validator):
+        """
+        Adds form validator to form.
+
+        :param validator: Object of FormValidator class.
+        """
         validator.set_form(self)
         self.form_validators.append(validator)
 
     def get_values(self, name):
+        """
+        Get all values of field.
+
+        :param name: name of field.
+        :rtype: FieldValue
+        """
         return self.fields[name].get_values()
 
     def get_value(self, name, index=0, default=NotImplemented):
+        """
+        Get field value at index.
+
+        :param name: name of field
+        :param index: index of value in field (default: 0)
+        :param default: what to return if value not found (default: raise
+            error)
+        """
         return self.fields[name].get_value(index, default)
 
     def set_values(self, name, values, force=False):
+        """
+        Set values for field.
+
+        :param name: name of field
+        :param values: list of values
+        :param force: if set to False and field.ignore is set to True, nothing
+            will happend
+        """
         self.fields[name].set_values(values, force=force)
 
     def set_value(self, name, value, index=0, force=False):
+        """set_value(name, value[, index, force])
+        Set value at index.
+
+        :param name: name of field
+        :param value: value
+        :param force: if set to False and field.ignore is set to True, nothing
+            will happend
+        """
         self.fields[name].set_value(value, index, force=force)
 
     def get_data_dict(self, minified=False):
+        """get_data_dict([minified])
+        Get all values from all fields.
+
+        :param minified: if True: all list with length of 1 will be converted
+            to direct value. all empty list will be omited
+        :rtype: dict
+        """
         tree = {}
         for name, field in self.fields.items():
             tree[name] = field.get_values()
@@ -137,6 +183,14 @@ class Form(object):
         return tree
 
     def parse_dict(self, data, force=False):
+        """parse_dict(data[, force])
+        Parse data from dict. Keys is the field name, values can be in form of
+        list or without it.
+
+        :param data: dict of data to parse
+        :param force: if set to False and field.ignore is set to True, nothing
+            will happend
+        """
         for name, values in data.items():
             if name in self.fields:
                 field = self.fields[name]
@@ -148,6 +202,7 @@ class Form(object):
                 self._parse_sub_form(name, values)
 
     def get_report(self):
+        """Get report from all fields."""
         def convert(messages):
             data = []
             for message in messages:
@@ -178,12 +233,24 @@ class Form(object):
         return self.translation_class(*args, **kwargs)
 
     def create_form(self):
+        """
+        This metod will be called to create form.
+        It should be reimplemented.
+        """
         pass
 
     def on_success(self):
+        """
+        This metod will be called when validation will success.
+        It should be reimplemented.
+        """
         pass
 
     def on_fail(self):
+        """
+        This metod will be called when validation will fail.
+        It should be reimplemented.
+        """
         pass
 
 
