@@ -4,9 +4,11 @@ from decimal import Decimal, InvalidOperation
 
 
 class FieldValidator(object):
+    message = None
 
     def __init__(self):
-        self.message = self.__class__.__name__
+        if self.message is None:
+            self.message = self.__class__.__name__
 
     def init_field(self, field):
         self.field = field
