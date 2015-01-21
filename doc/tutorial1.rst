@@ -85,9 +85,8 @@ Every field has a ``success``, ``messages`` and ``values`` keys. There can be
 many values for one field, so every validation is made per field (for
 validation like ``NotEmpty``) and per value.
 
-.. todo::
-
-    make link to list of validators.
+List of all validators:
+    :doc:`/api/validators`
 
 2.1.3 Form validators
 =====================
@@ -117,9 +116,8 @@ Validators.
     })
     >> False
 
-.. todo::
-
-    make link to list of validators.
+List of all validators:
+    :doc:`/api/formvalidators`
 
 2.1.4 Getting the data
 ======================
@@ -169,7 +167,7 @@ converted, so convert feature is here to help you.
 .. code-block:: python
 
     from formskit import Form
-    from formskit.field_convert import ToInt
+    from formskit.converters import ToInt
     form = Form()
     form.add_field('myfield', convert=ToInt())
     form.validate({
@@ -178,6 +176,8 @@ converted, so convert feature is here to help you.
     })
     form.get_data_dict(True)
     >> {'myfield': 123}
+
+:doc:`/api/converters`
 
 2.1.6 Defaults
 ==============

@@ -32,6 +32,7 @@ class FieldValidator(object):
 
 
 class NotEmpty(FieldValidator):
+    """Will fail if no value found of value is empty or has only whitespaces"""
 
     def validate_field(self):
         return len(self.field.values) > 0
@@ -49,6 +50,7 @@ class NotEmpty(FieldValidator):
 
 
 class IsDigit(FieldValidator):
+    """Will fail if value is not a digit."""
 
     regex = re.compile('^-{0,1}[0-9]+$')
 
@@ -57,6 +59,7 @@ class IsDigit(FieldValidator):
 
 
 class IsDecimal(FieldValidator):
+    """Will fail if value can not be converted to decimal.Decimal."""
 
     def validate_value(self):
         try:
@@ -66,7 +69,8 @@ class IsDecimal(FieldValidator):
             return False
 
 
-class Email(FieldValidator):
+class IsEmail(FieldValidator):
+    """Will fail if value is not an email."""
 
     regex = re.compile(
         "^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$")
@@ -78,6 +82,7 @@ class Email(FieldValidator):
 
 
 class InList(FieldValidator):
+    """Will fail if value is not in list."""
 
     def __init__(self, values, message=None):
         super().__init__()

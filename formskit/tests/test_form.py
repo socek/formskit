@@ -5,7 +5,7 @@ from pytest import raises
 from formskit.field import Field
 from formskit.form import Form, WrongValueName
 from formskit.validators import NotEmpty, IsDigit
-from formskit.field_convert import ToInt
+from formskit.converters import ToInt
 from formskit.formvalidators import FormValidator
 from formskit.translation import Translation
 

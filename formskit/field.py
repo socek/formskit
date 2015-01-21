@@ -1,7 +1,7 @@
 from json import dumps
 from base64 import urlsafe_b64encode
 
-from .field_convert import FakeConvert
+from .converters import FakeConvert
 
 
 class Field(object):

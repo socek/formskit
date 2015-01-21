@@ -19,6 +19,7 @@ class FormValidator(object):
 
 
 class MustMatch(FormValidator):
+    """Will fail if first values of provided field names are not the same."""
 
     message = 'input must be the same!'
 

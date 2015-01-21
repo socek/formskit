@@ -1,4 +1,5 @@
 class FakeConvert(object):
+    """Default convertor which does nothing."""
 
     def _set_field(self, field):
         self.field = field
@@ -17,6 +18,7 @@ class FakeConvert(object):
 
 
 class ToInt(FakeConvert):
+    """Converts to int."""
 
     def convert(self, value):
         return int(value)

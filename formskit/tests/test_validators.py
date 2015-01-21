@@ -84,7 +84,7 @@ class IsDigitValidatorTest(ValidatorTestMixin, FormskitTestCase):
 
 
 class EmailValidatorTest(ValidatorTestMixin, FormskitTestCase):
-    cls = VAL.Email
+    cls = VAL.IsEmail
 
     good_samples = [
         'msocek@gmail.com',
