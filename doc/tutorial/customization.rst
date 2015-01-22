@@ -15,7 +15,8 @@ Field validation is made in two steps:
 
 Validating field is made to make validation of situations like "no value found"
 or how many values needs to be at the field. Second step is just to validate
-every value which was provided for field.
+every value which was provided for field. `message` variable is the text of
+error message.
 
 .. code-block:: python
 
@@ -74,6 +75,10 @@ every value which was provided for field.
 2.3.2 Form validators
 =====================
 
+Form validators are very similar to the field validators. Only method you need
+to override is `validate(self)`. Below you can se MustMatch form validator
+example.
+
 .. code-block:: python
 
     class MustMatch(FormValidator):
@@ -101,6 +106,11 @@ every value which was provided for field.
 2.3.3 Inner validation
 ======================
 
+Default validation is working like that: first validate fields and if it will
+success, then validate form validation. If it's TreeForm, then after that
+subform will be validated. You can change this behavior in the `_validate`
+method.
+
 .. code-block:: python
 
     def _validate(self):
@@ -117,6 +127,10 @@ every value which was provided for field.
 
 2.3.4 Converters
 ================
+
+Converting is made by running one o 2 methods. `convert` is converting from
+string to target object, `convert_back` is converting from target object to
+string.
 
 .. code-block:: python
 

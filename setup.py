@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 
 install_requires = [
     'python-dateutil',
+    'sphinx_rtd_theme',
 ]
 
 if __name__ == '__main__':

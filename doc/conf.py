@@ -15,6 +15,7 @@
 
 import sys
 import os
+import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -93,7 +94,7 @@ exclude_patterns = ['build']
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+modindex_common_prefix = ['formskit.']
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False
@@ -103,7 +104,9 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = "sphinx_rtd_theme"
+
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -187,22 +190,22 @@ htmlhelp_basename = 'Formskitdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'Formskit.tex', 'Formskit Documentation',
-   'Dominik "Socek" Długajczyk', 'manual'),
+    ('index', 'Formskit.tex', 'Formskit Documentation',
+     'Dominik "Socek" Długajczyk', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -245,9 +248,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Formskit', 'Formskit Documentation',
-   'Dominik "Socek" Długajczyk', 'Formskit', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'Formskit', 'Formskit Documentation',
+     'Dominik "Socek" Długajczyk', 'Formskit', 'Forms validation.',
+     ''),
 ]
 
 # Documents to append as an appendix to all manuals.
