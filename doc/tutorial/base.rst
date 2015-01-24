@@ -182,7 +182,7 @@ converted, so convert feature is here to help you.
 2.1.6 Defaults
 ==============
 
-When you want to set default values, you can do this by using `parse_dict`.
+When you want to set default values, you can do this by using ``parse_dict``.
 
 .. code-block:: python
 
@@ -202,7 +202,7 @@ When you want to set default values, you can do this by using `parse_dict`.
         'myfield3': []
     }
 
-As you can see, `parse_dict` can detect if we put the data in list or not. Now
+As you can see, ``parse_dict`` can detect if we put the data in list or not. Now
 we can submit a form.
 
 .. code-block:: python
@@ -219,7 +219,7 @@ we can submit a form.
     }
 
 New values will make field to reset (so old default values will be removed).
-Thats why `myfield2` do not have 'three' value.
+Thats why ``myfield2`` do not have 'three' value.
 
 
 2.1.7 Field ignoring
@@ -262,9 +262,9 @@ three methods:
     def on_fail(self):
         pass
 
-* `create_form` will be runned when form object will be created
-* `on_success` will be runned when validation will success
-* `on_fail` will be runned when validation will fail
+* ``create_form`` will be runned when form object will be created
+* ``on_success`` will be runned when validation will success
+* ``on_fail`` will be runned when validation will fail
 
 .. code-block:: python
 
