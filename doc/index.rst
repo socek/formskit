@@ -8,11 +8,6 @@ Formskit
 
 ``Formskit`` is validating forms mechanizm made for flexibility.
 
-.. note::
-
-    .. include:: commit.rst
-    .. include:: commit_msg.rst
-
 Overall
 =======
 
