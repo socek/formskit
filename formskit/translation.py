@@ -18,3 +18,21 @@ class Translation(object):
 
     def translate(self):
         return self.text
+
+
+class Translable(object):
+
+    def reset(self):
+        """
+        Remove all the messages.
+        """
+        self.messages = []
+
+    def get_error_messages(self):
+        """
+        Get all error messages.
+        """
+        return [
+            message()
+            for message in self.messages
+        ]

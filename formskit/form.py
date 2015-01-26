@@ -1,9 +1,9 @@
 from .field import Field
 from .formvalidators import FormValidationError
-from .translation import Translation
+from .translation import Translation, Translable
 
 
-class Form(object):
+class Form(Translable):
 
     form_name_value = 'form_name'
     translation_class = Translation
@@ -79,8 +79,8 @@ class Form(object):
 
     def reset(self):
         """Reset the form and clear all it's fields."""
+        super().reset()
         self.success = None
-        self.messages = []
         for field in self.fields.values():
             field.reset()
 

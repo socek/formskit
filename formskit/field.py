@@ -2,9 +2,10 @@ from json import dumps
 from base64 import urlsafe_b64encode
 
 from .converters import FakeConvert
+from .translation import Translable
 
 
-class Field(object):
+class Field(Translable):
 
     def __init__(self,
                  name,
@@ -48,8 +49,8 @@ class Field(object):
             will happend
         """
         if self._can_this_be_edited(force):
+            super().reset()
             self.values = []
-            self.messages = []
             self.error = False
 
     def validate(self):
@@ -189,13 +190,12 @@ class TreeField(Field):
         return urlsafe_b64encode(json.encode())
 
 
-class FieldValue(object):
+class FieldValue(Translable):
 
     def __init__(self, field, value):
         self.field = field
         self.value = value
-        self.error = False
-        self.messages = []
+        self.reset()
 
     def set_error(self, text):
         """
@@ -208,3 +208,7 @@ class FieldValue(object):
         message = self.field._get_message_object()
         message.init(text, field=self.field, value=self)
         self.messages.append(message)
+
+    def reset(self):
+        super().reset()
+        self.error = False
