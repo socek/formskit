@@ -98,9 +98,9 @@ class Field(Translable):
                 return default
         return self.convert(field_value.value)
 
-    def get_value_error(self, index=0, default=NotImplemented):
+    def get_value_errors(self, index=0, default=NotImplemented):
         """
-        Gets error from value.
+        Gets errors from value.
 
         :param index: index of value
         :param default: what will be return if value is not found. If not set,
@@ -113,7 +113,7 @@ class Field(Translable):
                 raise
             else:
                 return default
-        return field_value.messages
+        return field_value.get_error_messages()
 
     def get_values(self):
         """

@@ -179,13 +179,13 @@ class GetValueErrorTests(FormskitTestCase):
 
     def test_index_error(self):
         with raises(IndexError):
-            self.field.get_value_error()
+            self.field.get_value_errors()
 
     def test_defaul(self):
-        assert self.field.get_value_error(default='elf') == 'elf'
+        assert self.field.get_value_errors(default='elf') == 'elf'
 
     def test_normal(self):
         self.field.values.append(FieldValue(self.field, 'val'))
-        self.field.values[0].messages = ['my error']
+        self.field.values[0].messages = [(lambda: 'my error')]
 
-        assert self.field.get_value_error() == ['my error']
+        assert self.field.get_value_errors() == ['my error']
