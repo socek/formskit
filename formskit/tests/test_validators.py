@@ -1,3 +1,5 @@
+from pytest import fixture
+
 from formskit.tests.base import FormskitTestCase
 from formskit.field import Field, FieldValue
 from formskit.translation import Translation
@@ -172,3 +174,28 @@ class InListTest(FormskitTestCase):
         assert self.field.messages == []
         assert field_value.error is True
         assert field_value.messages[0].text == self.cls.__name__
+
+
+class TestFieldValidatorInit(object):
+
+    def test_custom_message(self):
+        """
+        .__init__ should do nothing when message is set.
+        """
+        class Example2(VAL.FieldValidator):
+            message = 'custome message'
+
+        obj = Example2()
+
+        assert obj.message == 'custome message'
+
+    def test_default_message(self):
+        """
+        .__init__ should generate message from class name
+        """
+        class Example3(VAL.FieldValidator):
+            pass
+
+        obj = Example3()
+
+        assert obj.message == 'Example3'
