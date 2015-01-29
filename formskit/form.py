@@ -103,7 +103,6 @@ class Form(Translable):
         return success
 
     def _validate_form_validators(self):
-        success = True
         for validator in self.form_validators:
             try:
                 validator()
@@ -111,8 +110,8 @@ class Form(Translable):
                 message = self._get_message_object()
                 message.init(er.message, form=self)
                 self.messages.append(message)
-                success = False
-        return success
+                return False
+        return True
 
     def add_form_validator(self, validator):
         """
