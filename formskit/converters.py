@@ -1,4 +1,5 @@
 class FakeConvert(object):
+
     """Default convertor which does nothing."""
 
     def _set_field(self, field):
@@ -18,10 +19,17 @@ class FakeConvert(object):
 
 
 class ToInt(FakeConvert):
+
     """Converts to int."""
 
     def convert(self, value):
-        return int(value)
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            return None
 
     def convert_back(self, value):
-        return str(value)
+        if value is None:
+            return None
+        else:
+            return str(value)
