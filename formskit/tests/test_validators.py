@@ -77,11 +77,11 @@ class IsDigitValidatorTest(ValidatorTestMixin, FormskitTestCase):
     cls = VAL.IsDigit
 
     good_samples = [
-        '1', '123123123', '012312', '-123123',
+        '1', '123123123', '012312', '-123123', '',
     ]
 
     bad_samples = [
-        'a', '', '-123213.12323', '2a',
+        'a', '-123213.12323', '2a',
     ]
 
 
