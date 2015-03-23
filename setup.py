@@ -9,7 +9,7 @@ install_requires = [
 
 if __name__ == '__main__':
     setup(name='formskit',
-          version='0.5.4.5',
+          version='0.5.4.6',
           author=['Dominik "Socek" Długajczy'],
           url='https://github.com/socek/formskit/',
           description='Simple forms validation.',
