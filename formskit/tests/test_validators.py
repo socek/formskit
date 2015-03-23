@@ -1,7 +1,5 @@
-from pytest import fixture
-
 from formskit.tests.base import FormskitTestCase
-from formskit.field import Field, FieldValue
+from formskit.field import Field, FieldValue, AvalibleValue
 from formskit.translation import Translation
 import formskit.validators as VAL
 
@@ -123,7 +121,7 @@ class IsValueInAvalibleValuesTest(FormskitTestCase):
     def setUp(self):
         super().setUp()
         self.field = ExampleField('name')
-        self.field.set_avalible_values(['5'])
+        self.field.set_avalible_values([AvalibleValue('5')])
         self.validator = self.cls()
         self.validator.init_field(self.field)
 
@@ -147,7 +145,7 @@ class IsValueInAvalibleValuesTest(FormskitTestCase):
 
     def test_good_method(self):
         def method():
-            return ['4']
+            yield AvalibleValue('4')
 
         self.field.set_avalible_values(method)
 
@@ -161,7 +159,7 @@ class IsValueInAvalibleValuesTest(FormskitTestCase):
 
     def test_fail_method(self):
         def method():
-            return ['4']
+            yield AvalibleValue('4')
 
         self.field.set_avalible_values(method)
 

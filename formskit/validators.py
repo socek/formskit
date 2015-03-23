@@ -23,6 +23,10 @@ class FieldValidator(object):
         if self.validate_value() is False:
             self.set_value_error()
 
+    @property
+    def value_converted(self):
+        return self.field.convert(self.value)
+
     def set_field_error(self):
         self.field.set_error(self.message)
 
@@ -103,4 +107,7 @@ class IsValueInAvalibleValues(FieldValidator):
                 return True
             elif type(self.value) == str and self.value.strip() == '':
                 return True
-        return self.value in self.field.avalible_values
+
+        return self.value_converted in [
+            avalible.value for avalible in self.field.avalible_values
+        ]

@@ -226,3 +226,10 @@ class FieldValue(Translable):
     def reset(self):
         super().reset()
         self.error = False
+
+
+class AvalibleValue(object):
+
+    def __init__(self, value, label=None):
+        self.value = value
+        self.label = label
