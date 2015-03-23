@@ -150,7 +150,6 @@ class IsValueInAvalibleValuesTest(FormskitTestCase):
             return ['4']
 
         self.field.set_avalible_values(method)
-        self.validator.init_field(self.field)
 
         field_value = FieldValue(self.field, '4')
         self.validator.make_value(field_value)
@@ -165,9 +164,44 @@ class IsValueInAvalibleValuesTest(FormskitTestCase):
             return ['4']
 
         self.field.set_avalible_values(method)
-        self.validator.init_field(self.field)
 
         field_value = FieldValue(self.field, '5')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is True
+        assert self.field.messages == []
+        assert field_value.error is True
+        assert field_value.messages[0].text == self.cls.__name__
+
+    def test_allow_empty_true_for_empty_string(self):
+        self.field.set_avalible_values([])
+        self.validator.allow_empty = True
+
+        field_value = FieldValue(self.field, '')
+        self.validator.make_value(field_value)
+
+        assert self.field.error is False
+        assert self.field.messages == []
+        assert field_value.messages == []
+        assert field_value.error is False
+
+    def test_allow_empty_true_for_none(self):
+        self.field.set_avalible_values([])
+        self.validator.allow_empty = True
+
+        field_value = FieldValue(self.field, None)
+        self.validator.make_value(field_value)
+
+        assert self.field.error is False
+        assert self.field.messages == []
+        assert field_value.messages == []
+        assert field_value.error is False
+
+    def test_allow_empty_true_for_string(self):
+        self.field.set_avalible_values([])
+        self.validator.allow_empty = True
+
+        field_value = FieldValue(self.field, 'teststr')
         self.validator.make_value(field_value)
 
         assert self.field.error is True

@@ -93,5 +93,14 @@ class IsValueInAvalibleValues(FieldValidator):
 
     """Will fail if value is not in list."""
 
+    def __init__(self, allow_empty=False):
+        super().__init__()
+        self.allow_empty = allow_empty
+
     def validate_value(self):
+        if self.allow_empty:
+            if self.value is None:
+                return True
+            elif type(self.value) == str and self.value.strip() == '':
+                return True
         return self.value in self.field.avalible_values
