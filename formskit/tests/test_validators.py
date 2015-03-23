@@ -117,14 +117,14 @@ class IsDecimalTest(ValidatorTestMixin, FormskitTestCase):
     ]
 
 
-class InListTest(FormskitTestCase):
-    cls = VAL.InList
+class IsValueInAvalibleValuesTest(FormskitTestCase):
+    cls = VAL.IsValueInAvalibleValues
 
     def setUp(self):
         super().setUp()
         self.field = ExampleField('name')
-        self.data = ['5']
-        self.validator = self.cls(self.data)
+        self.field.set_avalible_values(['5'])
+        self.validator = self.cls()
         self.validator.init_field(self.field)
 
     def test_good(self):
@@ -149,7 +149,7 @@ class InListTest(FormskitTestCase):
         def method():
             return ['4']
 
-        self.validator = self.cls(method)
+        self.field.set_avalible_values(method)
         self.validator.init_field(self.field)
 
         field_value = FieldValue(self.field, '4')
@@ -164,7 +164,7 @@ class InListTest(FormskitTestCase):
         def method():
             return ['4']
 
-        self.validator = self.cls(method)
+        self.field.set_avalible_values(method)
         self.validator.init_field(self.field)
 
         field_value = FieldValue(self.field, '5')

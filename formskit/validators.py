@@ -89,19 +89,9 @@ class IsEmail(FieldValidator):
         return False
 
 
-class InList(FieldValidator):
+class IsValueInAvalibleValues(FieldValidator):
 
     """Will fail if value is not in list."""
 
-    def __init__(self, values, message=None):
-        super().__init__()
-        self.values = values
-        self.message = message or self.message
-
     def validate_value(self):
-        values = (
-            self.values
-            if hasattr(self.values, '__contains__')
-            else self.values()
-        )
-        return self.value in values
+        return self.value in self.field.avalible_values
