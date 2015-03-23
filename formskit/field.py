@@ -21,6 +21,20 @@ class Field(Translable):
         self._init_convert(convert)
         self.values = []
         self.reset(True)
+        self._avalible_values = None
+
+    def set_avalible_values(self, avalible_values):
+        self._avalible_values = avalible_values
+
+    @property
+    def avalible_values(self):
+        if self._avalible_values is None:
+            return []
+        return (
+            self._avalible_values
+            if hasattr(self._avalible_values, '__contains__')
+            else self._avalible_values()
+        )
 
     def _init_validators(self, validators=None):
         self.validators = []
