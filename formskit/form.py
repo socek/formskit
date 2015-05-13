@@ -190,15 +190,28 @@ class Form(Translable):
         :param force: if set to False and field.ignore is set to True, nothing
             will happend
         """
+        def raise_error(name):
+            raise KeyError(name)
         for name, values in data.items():
-            if name in self.fields:
-                field = self.fields[name]
-                if hasattr(values, '__iter__') and type(values) is not str:
-                    field.set_values(values, force=force)
-                else:
-                    field.set_value(values, force=force)
+            (
+                self._parsed_field(name, values, force)
+                or self._parsed_sub_form(name, values)
+                or raise_error(name)
+            )
+
+    def _parsed_sub_form(self, name, values):
+        return False
+
+    def _parsed_field(self, name, values, force=False):
+        if name in self.fields:
+            field = self.fields[name]
+            if hasattr(values, '__iter__') and type(values) is not str:
+                field.set_values(values, force=force)
             else:
-                self._parse_sub_form(name, values)
+                field.set_value(values, force=force)
+            return True
+        else:
+            return False
 
     def get_report(self):
         """Get report from all fields."""

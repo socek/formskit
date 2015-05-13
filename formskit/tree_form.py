@@ -71,10 +71,12 @@ class TreeForm(Form):
                 success &= sub_form._validate()
         return success
 
-    def _parse_sub_form(self, name, data):
+    def _parsed_sub_form(self, name, data):
+        #TODO: find some key error maybe?
         for index, values in enumerate(data):
             sub_form = self.get_or_create_sub_form(name, index)
             sub_form.parse_dict(values)
+        return True
 
     def _validate(self):
         # Why this method was implemented in this way?

@@ -73,6 +73,18 @@ class FormTest(TestCase):
         assert form.get_value('name') == 'n1'
         assert form.get_value('second') == 'n2'
 
+    def test_parse_dict_error(self):
+        """
+        .parse_dict should raise KeyError when key not found in fields
+        """
+        form = Form()
+        form.add_field('name')
+
+        with raises(KeyError):
+            form.parse_dict({
+                'nameslip': ['n1'],
+            })
+
     def test_messages(self):
         class ExampleTranslation(Translation):
 
