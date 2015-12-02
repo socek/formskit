@@ -65,6 +65,7 @@ class Form(Translable):
         return raw_data.get(self.form_name_value, None) == [self.get_name(), ]
 
     def _parse_raw_data(self, raw_data):
+        self.raw_data = raw_data
         for name, values in raw_data.items():
             if name == self.form_name_value:
                 continue

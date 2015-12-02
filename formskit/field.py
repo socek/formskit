@@ -53,7 +53,7 @@ class Field(Translable):
         if convert is None:
             convert = FakeConvert()
         self.convert = convert
-        self.convert._set_field(convert)
+        self.convert._set_field(self)
 
     def reset(self, force=False):
         """
@@ -75,6 +75,8 @@ class Field(Translable):
         """
         for validator in self.validators:
             validator.make_field()
+
+        self.convert.make_field()
 
         if self.error:
             return False

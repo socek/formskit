@@ -20,6 +20,9 @@ class FakeConvert(object):
     def back(self, value):
         return self.convert_back(value)
 
+    def make_field(self):
+        pass
+
 
 class ToInt(FakeConvert):
 
@@ -59,9 +62,9 @@ class ToDatetime(FakeConvert):
 class ToBool(FakeConvert):
 
     def convert(self, value):
-        try:
-            return bool(value.strip())
-        except (ValueError, TypeError):
+        if value in ['1', '2']:
+            return True
+        else:
             return False
 
     def convert_back(self, value):
@@ -69,3 +72,6 @@ class ToBool(FakeConvert):
             return '1'
         else:
             return ''
+
+    def make_field(self):
+        self.field.set_value(self.field.name in self.field.form.raw_data)
