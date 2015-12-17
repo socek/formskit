@@ -41,8 +41,7 @@ class ToInt(FakeConvert):
             return str(value)
 
 
-class ToDatetime(FakeConvert):
-
+class ToDate(FakeConvert):
     """Converts to datetime."""
     format = '%Y-%m-%d'
 
@@ -57,6 +56,28 @@ class ToDatetime(FakeConvert):
             return value.strftime(self.format)
         else:
             return None
+
+
+class ToDatetime(FakeConvert):
+
+    """Converts to datetime."""
+    format = '%Y-%m-%d %H:%M'
+
+    def convert(self, value):
+        try:
+            return datetime.strptime(value, self.format)
+        except (ValueError, TypeError):
+            return None
+
+    def convert_back(self, value):
+        if value:
+            return value.strftime(self.format)
+        else:
+            return None
+
+    def make_field(self):
+        fvalue = self.field.values.pop(1)
+        self.field.values[0].value += ' ' + fvalue.value
 
 
 class ToBool(FakeConvert):
