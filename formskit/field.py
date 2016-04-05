@@ -105,6 +105,13 @@ class Field(Translable):
         :param default: what will be return if value is not found. If not set,
             then raise IndexError
         """
+        value = self.get_raw_value(index, default)
+        if value == default:
+            return default
+        else:
+            return self.convert(value)
+
+    def get_raw_value(self, index=0, default=NotImplemented):
         try:
             field_value = self.values[index]
         except IndexError:
@@ -112,7 +119,7 @@ class Field(Translable):
                 raise
             else:
                 return default
-        return self.convert(field_value.value)
+        return field_value.value
 
     def get_value_errors(self, index=0, default=NotImplemented):
         """

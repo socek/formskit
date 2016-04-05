@@ -2,7 +2,6 @@ from datetime import datetime
 
 
 class FakeConvert(object):
-
     """Default convertor which does nothing."""
 
     def _set_field(self, field):
@@ -25,7 +24,6 @@ class FakeConvert(object):
 
 
 class ToInt(FakeConvert):
-
     """Converts to int."""
 
     def convert(self, value):
@@ -59,7 +57,6 @@ class ToDate(FakeConvert):
 
 
 class ToDatetime(FakeConvert):
-
     """Converts to datetime."""
     format = '%Y-%m-%d %H:%M'
 
@@ -95,4 +92,8 @@ class ToBool(FakeConvert):
             return ''
 
     def make_field(self):
-        self.field.set_value(self.field.name in self.field.form.raw_data)
+        value = (
+            self.field.form and
+            self.field.name in self.field.form.raw_data
+        )
+        self.field.set_value(value)
